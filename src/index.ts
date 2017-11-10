@@ -1,4 +1,5 @@
 export * from './decorators'
-export * from './http-methods'
-export * from './find-classes'
+export * from './http-verbs'
+export * from './find-controllers'
+export * from './controller'
 export { getState, rollUpState } from './state-util'

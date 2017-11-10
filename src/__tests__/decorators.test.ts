@@ -2,7 +2,7 @@ import {
   route,
   before,
   after,
-  methods,
+  verbs,
   GET,
   PATCH,
   HEAD,
@@ -13,7 +13,7 @@ import {
   DELETE,
   ALL
 } from '../decorators'
-import { HttpMethods } from '../http-methods'
+import { HttpVerbs } from '../http-verbs'
 import { getState } from '../state-util'
 
 describe('router decorator', () => {
@@ -93,15 +93,15 @@ describe('methods decorator', () => {
   describe('on class', () => {
     it('is not allowed', () => {
       expect(() => {
-        @methods([HttpMethods.GET])
+        @verbs([HttpVerbs.GET])
         class Test {}
         return new Test()
-      }).toThrowError(/method/)
+      }).toThrowError(/verbs/)
       expect(() => {
         @GET()
         class Test {}
         return new Test()
-      }).toThrowError(/method/)
+      }).toThrowError(/verbs/)
     })
   })
 
@@ -126,16 +126,16 @@ describe('methods decorator', () => {
 
       const state = getState(Test)!
       const wee = state.methods.get('wee')!
-      expect(wee.methods).toEqual([
-        HttpMethods.ALL,
-        HttpMethods.DELETE,
-        HttpMethods.CONNECT,
-        HttpMethods.OPTIONS,
-        HttpMethods.GET,
-        HttpMethods.HEAD,
-        HttpMethods.PATCH,
-        HttpMethods.PUT,
-        HttpMethods.POST
+      expect(wee.verbs).toEqual([
+        HttpVerbs.ALL,
+        HttpVerbs.DELETE,
+        HttpVerbs.CONNECT,
+        HttpVerbs.OPTIONS,
+        HttpVerbs.GET,
+        HttpVerbs.HEAD,
+        HttpVerbs.PATCH,
+        HttpVerbs.PUT,
+        HttpVerbs.POST
       ])
       expect(wee.paths).toEqual(['/save'])
     })

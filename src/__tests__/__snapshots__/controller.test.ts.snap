@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createController creates the correct state 1`] = `
+Map {
+  "all" => Object {
+    "afterMiddleware": Array [
+      "afterRoot1",
+      "afterRoot2",
+    ],
+    "beforeMiddleware": Array [
+      "beforeRoot1",
+      "beforeRoot2",
+      "beforeAll",
+    ],
+    "paths": Array [
+      "/root1/all",
+      "/root2/all",
+    ],
+    "verbs": Array [
+      "*",
+    ],
+  },
+  "get" => Object {
+    "afterMiddleware": Array [
+      "afterGet",
+      "afterRoot1",
+      "afterRoot2",
+    ],
+    "beforeMiddleware": Array [
+      "beforeRoot1",
+      "beforeRoot2",
+      "beforeGet",
+    ],
+    "paths": Array [
+      "/root1/get",
+      "/root2/get",
+    ],
+    "verbs": Array [
+      "GET",
+    ],
+  },
+  "post" => Object {
+    "afterMiddleware": Array [
+      "afterRoot1",
+      "afterRoot2",
+    ],
+    "beforeMiddleware": Array [
+      "beforeRoot1",
+      "beforeRoot2",
+    ],
+    "paths": Array [
+      "/root1/post",
+      "/root2/post",
+    ],
+    "verbs": Array [
+      "POST",
+    ],
+  },
+  "put" => Object {
+    "afterMiddleware": Array [
+      "afterRoot1",
+      "afterRoot2",
+    ],
+    "beforeMiddleware": Array [
+      "beforeRoot1",
+      "beforeRoot2",
+    ],
+    "paths": Array [
+      "/root1/",
+      "/root2/",
+    ],
+    "verbs": Array [
+      "PUT",
+    ],
+  },
+}
+`;

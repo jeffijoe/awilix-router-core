@@ -1,15 +1,11 @@
-import { HttpMethod } from './http-methods'
+import { HttpVerb } from './http-verbs'
 import { uniq } from './util'
+import { STATE } from './symbols'
 
 /**
  * Middleware decorator parameter.
  */
 export type MiddlewareParameter = Array<any> | any
-
-/**
- * Symbol used for getting and setting the config state.
- */
-const STATE = Symbol('Router Config')
 
 /**
  * Router config state.
@@ -42,9 +38,9 @@ export interface IRouteConfig {
    */
   afterMiddleware: Array<any>
   /**
-   * HTTP methods to register.
+   * HTTP verbs to register.
    */
-  methods: Array<HttpMethod>
+  verbs: Array<HttpVerb>
 }
 
 /**
@@ -120,7 +116,7 @@ export function createRouteConfig(): IRouteConfig {
     paths: [],
     beforeMiddleware: [],
     afterMiddleware: [],
-    methods: []
+    verbs: []
   }
 }
 
@@ -145,7 +141,7 @@ export function rollUpState(
         ...method.afterMiddleware,
         ...state.root.afterMiddleware
       ],
-      methods: method.methods
+      verbs: method.verbs
     })
   })
   return result
@@ -191,13 +187,13 @@ export function addAfterMiddleware(
 }
 
 /**
- * Adds methods to the specified route config, and depupes the resulting array.
+ * Adds http methods to the specified route config, and depupes the resulting array.
  *
  * @param config
  * @param value
  */
-export function addMethods(config: IRouteConfig, value: Array<HttpMethod>) {
-  config.methods = uniq([...config.methods, ...value])
+export function addHttpVerbs(config: IRouteConfig, value: Array<HttpVerb>) {
+  config.verbs = uniq([...config.verbs, ...value])
 }
 
 /**
@@ -220,9 +216,13 @@ function concatPaths(rootPaths: Array<string>, methodPaths: Array<string>) {
   }
 
   rootPaths.forEach(rootPath => {
-    methodPaths.forEach(methodPath => {
-      result.push(rootPath + methodPath)
-    })
+    if (methodPaths.length === 0) {
+      result.push(rootPath)
+    } else {
+      methodPaths.forEach(methodPath => {
+        result.push(rootPath + methodPath)
+      })
+    }
   })
 
   return result

@@ -8,9 +8,7 @@
 [![npm](https://img.shields.io/npm/dt/awilix-router-core.svg?maxAge=1000)](https://www.npmjs.com/package/awilix-router-core)
 [![npm](https://img.shields.io/npm/l/awilix-router-core.svg?maxAge=1000)](https://github.com/jeffijoe/awilix-router-core/blob/master/LICENSE.md)
 
-> This package is intended for use with HTTP routers that want to configure routes using decorators.
-
-> This package exposes an API for use with **ESNext Decorators**.
+> This package is intended for use with HTTP libraries that want to configure routes using **ESNext decorators** or a **builder pattern**.
 
 # Install
 
@@ -28,90 +26,76 @@ yarn add awilix-router-core
 
 # Example
 
-**End-user:**
+The end-user of the routing library will be able to use decorators or a builder pattern to declaratively set up their routes, middleware and methods.
 
-The end-user of the routing library will be able to use decorators to declaratively set up their routes, middleware and methods.
+## With decorators
 
 ```js
 // You may re-export these as well.
-import { route, before, GET, methods, HttpMethods } from 'awilix-router-core'
+import { route, before, GET, methods, HttpVerbs } from 'awilix-router-core'
 
 import bodyParser from 'your-framework-body-parser'
 import authenticate from 'your-framework-authentication'
 
 @before(bodyParser())
-@route('/todos')
+@route('/news')
 export default class NewsController {
+  constructor ({ service }) {
+    this.service = service
+  }
+
   @GET()
   async find (ctx) {
-    ctx.body = await doSomethingAsync()
+    ctx.body = await this.service.doSomethingAsync()
   }
 
   @route('/:id')
   @GET()
   async get(ctx) {
-    ctx.body = await getNewsOrWhateverAsync(ctx.params.id)
+    ctx.body = await this.service.getNewsOrWhateverAsync(ctx.params.id)
   }
 
   @route('(/:id)')
-  @methods([HttpMethods.POST, HttpMethods.PUT])
+  @methods([HttpVerbs.POST, HttpVerbs.PUT])
   @before(authenticate())
   async save (ctx) {
-    ctx.body = await saveNews(ctx.params.id, ctx.request.body)
+    ctx.body = await this.service.saveNews(ctx.params.id, ctx.request.body)
   }
 }
 ```
 
-**Framework adapter**
+## With builder pattern
+
+```js
+// You may re-export these as well.
+import { createController } from 'awilix-router-core'
+
+import bodyParser from 'your-framework-body-parser'
+import authenticate from 'your-framework-authentication'
+
+// Can use a factory function or a class.
+const api = ({ service }) => ({
+  find: async () => (ctx.body = await service.doSomethingAsync()),
+  get: async (ctx) => (ctx.body = await service.getNewsOrWhateverAsync(ctx.params.id)),
+  save: async (ctx) => (ctx.body = await service.saveNews(ctx.params.id, ctx.request.body))
+}) 
+
+export default createController(api)
+  .before(bodyParser())
+  .prefix('/news')
+  .get('', 'find') // <- "find" is the method on the result from `api`
+  .get('/:id', 'get') // <- "get" is the method on the result from `api`
+  .verbs([HttpVerbs.POST, HttpVerbs.PUT], '/:id', 'save', {
+    // "save" is the method on the result from `api`
+    before: [authenticate()]
+  })
+```
+
+# For framework adapter authors
 
 The framework adapter will use the tools provided by this package to extract routing config from decorated classes and register it in the router of choice.
 
-This example uses Koa + Koa Router for demo purposes.
-
-**Don't use this example verbatim, package it up and make it a bit nicer. 😁**
-
-```js
-import { getState, rollUpState, findClasses } from 'awilix-router-core'
-import Koa from 'koa'
-import Router from 'koa-router'
-
-function register (router, Class) {
-  const state = getState(Class)
-  if (!state) {
-    // No routing configured for this class.
-    return
-  }
-
-  // This will return a `Map` where the key is the controller function name, and the value is a concatted routing config.
-  const concatted = rollUpState(state)
-  concatted.forEach((cfg, key) => {
-    cfg.methods.forEach(method => {
-      if (method === '*') {
-        method = 'all'
-      }
-      method = method.toLowerCase()
-      router[method](
-        cfg.paths,
-        ...cfg.beforeMiddleware,
-        async (ctx, ...rest) => {
-          const instance = new Class(ctx.state.container.cradle)
-          await instance[key](ctx, ...rest)
-        },
-        ...cfg.afterMiddleware
-      )
-    })
-  })
-  return router
-}
-
-const router = new Router()
-// uses glob to auto-load classes.
-const classes = findClasses('routes/*.js', { cwd: __dirname })
-classes.forEach(Class => register(router, Class))
-const app = new Koa()
-app.use(router.routes())
-app.use(router.allowedMethods())
-```
+Check out the [`awilix-koa`](https://github.com/jeffijoe/awilix-koa/tree/master/src/controller.ts) reference implementation.
 
 # Author
 

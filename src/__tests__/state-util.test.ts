@@ -1,6 +1,6 @@
 import { rollUpState, getState } from '../state-util'
 import { route, before, after, GET, POST } from '../decorators'
-import { HttpMethods } from '../http-methods'
+import { HttpVerbs } from '../http-verbs'
 
 describe('rollUpState', () => {
   it('rolls up config correctly', () => {
@@ -37,7 +37,7 @@ describe('rollUpState', () => {
       'beforem1'
     ])
     expect(m1.afterMiddleware).toEqual(['afterm1', 'afterRoot1', 'afterRoot2'])
-    expect(m1.methods).toEqual([HttpMethods.POST, HttpMethods.GET])
+    expect(m1.verbs).toEqual([HttpVerbs.POST, HttpVerbs.GET])
   })
 
   it('returns child paths as-is when there are no root paths', () => {
@@ -51,5 +51,24 @@ describe('rollUpState', () => {
 
     const result = rollUpState(getState(Test)!)
     expect(result.get('method')!.paths).toEqual(['/test2', '/test1'])
+  })
+
+  it('does not require a method route when there is a root route', () => {
+    @route('/root')
+    class Test {
+      @GET()
+      get() {
+        /**/
+      }
+
+      @POST()
+      post() {
+        /**/
+      }
+    }
+
+    const result = rollUpState(getState(Test)!)
+    expect(result.get('get')!.paths).toEqual(['/root'])
+    expect(result.get('post')!.paths).toEqual(['/root'])
   })
 })

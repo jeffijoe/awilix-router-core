@@ -1,7 +1,7 @@
 /**
- * Possible Http method values.
+ * Possible Http verb values.
  */
-export type HttpMethod =
+export type HttpVerb =
   | 'GET'
   | 'HEAD'
   | 'POST'
@@ -15,7 +15,7 @@ export type HttpMethod =
 /**
  * Http methods.
  */
-export const HttpMethods: Record<string, HttpMethod> = {
+export const HttpVerbs: Record<string, HttpVerb> = {
   GET: 'GET',
   HEAD: 'HEAD',
   POST: 'POST',

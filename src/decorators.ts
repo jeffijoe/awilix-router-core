@@ -1,11 +1,11 @@
-import { HttpMethod, HttpMethods } from './http-methods'
+import { HttpVerb, HttpVerbs } from './http-verbs'
 import { invariant } from './invariant'
 import {
   getOrInitConfigForDecorator,
   addRoute,
   addBeforeMiddleware,
   addAfterMiddleware,
-  addMethods,
+  addHttpVerbs,
   MiddlewareParameter
 } from './state-util'
 
@@ -60,61 +60,58 @@ export function after(middleware: MiddlewareParameter) {
 }
 
 /**
- * Assigns one or more HTTP methods to class method.
+ * Assigns one or more HTTP verbs to class method.
  *
- * @param httpMethods
+ * @param httpVerbs
  */
-export function methods(httpMethods: Array<HttpMethod>) {
-  return function methodsDecorator(target: any, name?: string) {
-    invariant(
-      name,
-      'The "methods" decorator can only be used on class methods.'
-    )
-    addMethods(getOrInitConfigForDecorator(target, name), httpMethods)
+export function verbs(httpVerbs: Array<HttpVerb>) {
+  return function verbsDecorator(target: any, name?: string) {
+    invariant(name, 'The "verbs" decorator can only be used on class verbs.')
+    addHttpVerbs(getOrInitConfigForDecorator(target, name), httpVerbs)
   }
 }
 
 /**
- * The same as `methods([HttpMethods.GET])`
+ * The same as `verbs([HttpVerbs.GET])`
  */
-export const GET = () => methods([HttpMethods.GET])
+export const GET = () => verbs([HttpVerbs.GET])
 
 /**
- * The same as `methods([HttpMethods.HEAD])`
+ * The same as `verbs([HttpVerbs.HEAD])`
  */
-export const HEAD = () => methods([HttpMethods.HEAD])
+export const HEAD = () => verbs([HttpVerbs.HEAD])
 
 /**
- * The same as `methods([HttpMethods.POST])`
+ * The same as `verbs([HttpVerbs.POST])`
  */
-export const POST = () => methods([HttpMethods.POST])
+export const POST = () => verbs([HttpVerbs.POST])
 
 /**
- * The same as `methods([HttpMethods.PUT])`
+ * The same as `verbs([HttpVerbs.PUT])`
  */
-export const PUT = () => methods([HttpMethods.PUT])
+export const PUT = () => verbs([HttpVerbs.PUT])
 
 /**
- * The same as `methods([HttpMethods.DELETE])`
+ * The same as `verbs([HttpVerbs.DELETE])`
  */
-export const DELETE = () => methods([HttpMethods.DELETE])
+export const DELETE = () => verbs([HttpVerbs.DELETE])
 
 /**
- * The same as `methods([HttpMethods.CONNECT])`
+ * The same as `verbs([HttpVerbs.CONNECT])`
  */
-export const CONNECT = () => methods([HttpMethods.CONNECT])
+export const CONNECT = () => verbs([HttpVerbs.CONNECT])
 
 /**
- * The same as `methods([HttpMethods.OPTIONS])`
+ * The same as `verbs([HttpVerbs.OPTIONS])`
  */
-export const OPTIONS = () => methods([HttpMethods.OPTIONS])
+export const OPTIONS = () => verbs([HttpVerbs.OPTIONS])
 
 /**
- * The same as `methods([HttpMethods.PATCH])`
+ * The same as `verbs([HttpVerbs.PATCH])`
  */
-export const PATCH = () => methods([HttpMethods.PATCH])
+export const PATCH = () => verbs([HttpVerbs.PATCH])
 
 /**
- * The same as `methods([HttpMethods.ALL])`
+ * The same as `verbs([HttpVerbs.ALL])`
  */
-export const ALL = () => methods([HttpMethods.ALL])
+export const ALL = () => verbs([HttpVerbs.ALL])

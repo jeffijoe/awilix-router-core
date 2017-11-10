@@ -1,3 +1,5 @@
+const { createController } = require('../src/controller')
+
 class ModuleExportsClass {}
 ModuleExportsClass.isModuleExports = true
-module.exports = ModuleExportsClass
+module.exports = createController(ModuleExportsClass)
