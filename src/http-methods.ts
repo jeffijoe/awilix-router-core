@@ -1,3 +1,6 @@
+/**
+ * Possible Http method values.
+ */
 export type HttpMethod =
   | 'GET'
   | 'HEAD'
@@ -9,6 +12,9 @@ export type HttpMethod =
   | 'PATCH'
   | '*'
 
+/**
+ * Http methods.
+ */
 export const HttpMethods: Record<string, HttpMethod> = {
   GET: 'GET',
   HEAD: 'HEAD',

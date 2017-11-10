@@ -3,8 +3,17 @@ import { invariant } from './invariant'
 import { uniq } from './util'
 import { getOrInitConfigForDecorator, IRouteConfig } from './state-util'
 
+/**
+ * Middleware decorator parameter.
+ */
 export type MiddlewareParameter = Array<any> | any
 
+/**
+ * Registers a path for this class method.
+ * You can add more than one.
+ *
+ * @param path
+ */
 export function route(path: string) {
   return function routerDecorator(
     target: any,
@@ -16,6 +25,13 @@ export function route(path: string) {
   }
 }
 
+/**
+ * Adds one or more middleware before the method middleware.
+ * Can be applied to classes and methods. Class-level `before` middleware
+ * runs before method-level ones.
+ *
+ * @param middleware
+ */
 export function before(middleware: MiddlewareParameter) {
   return function routerDecorator(
     target: any,
@@ -27,6 +43,13 @@ export function before(middleware: MiddlewareParameter) {
   }
 }
 
+/**
+ * Adds one or more middleware after the method middleware.
+ * Can be applied to classes and methods. Class-level `after` middleware
+ * runs after method-level ones.
+ *
+ * @param middleware
+ */
 export function after(middleware: MiddlewareParameter) {
   return function routerDecorator(
     target: any,
@@ -38,7 +61,12 @@ export function after(middleware: MiddlewareParameter) {
   }
 }
 
-export function methods(httpMethods: Array<HttpMethod>, route?: string) {
+/**
+ * Assigns one or more HTTP methods to class method.
+ *
+ * @param httpMethods
+ */
+export function methods(httpMethods: Array<HttpMethod>) {
   return function methodsDecorator(target: any, name?: string) {
     invariant(
       name,
@@ -48,28 +76,67 @@ export function methods(httpMethods: Array<HttpMethod>, route?: string) {
   }
 }
 
+/**
+ * The same as `methods([HttpMethods.GET])`
+ */
 export const GET = () => methods([HttpMethods.GET])
 
+/**
+ * The same as `methods([HttpMethods.HEAD])`
+ */
 export const HEAD = () => methods([HttpMethods.HEAD])
 
+/**
+ * The same as `methods([HttpMethods.POST])`
+ */
 export const POST = () => methods([HttpMethods.POST])
 
+/**
+ * The same as `methods([HttpMethods.PUT])`
+ */
 export const PUT = () => methods([HttpMethods.PUT])
 
+/**
+ * The same as `methods([HttpMethods.DELETE])`
+ */
 export const DELETE = () => methods([HttpMethods.DELETE])
 
+/**
+ * The same as `methods([HttpMethods.CONNECT])`
+ */
 export const CONNECT = () => methods([HttpMethods.CONNECT])
 
+/**
+ * The same as `methods([HttpMethods.OPTIONS])`
+ */
 export const OPTIONS = () => methods([HttpMethods.OPTIONS])
 
+/**
+ * The same as `methods([HttpMethods.PATCH])`
+ */
 export const PATCH = () => methods([HttpMethods.PATCH])
 
+/**
+ * The same as `methods([HttpMethods.ALL])`
+ */
 export const ALL = () => methods([HttpMethods.ALL])
 
+/**
+ * Adds a middleware to the end of the target array.
+ *
+ * @param targetArray
+ * @param value
+ */
 function addMiddleware(targetArray: Array<any>, value: MiddlewareParameter) {
   Array.isArray(value) ? targetArray.push(...value) : targetArray.push(value)
 }
 
+/**
+ * Adds methods to the specified route config, and depupes the resulting array.
+ *
+ * @param config
+ * @param value
+ */
 function addMethods(config: IRouteConfig, value: Array<HttpMethod>) {
   config.methods = uniq([...config.methods, ...value])
 }

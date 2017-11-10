@@ -1,6 +1,11 @@
 import * as glob from 'glob'
 
 /**
+ * Basic constructor type.
+ */
+export type Constructor = new (...args: Array<any>) => any
+
+/**
  * Finds classes using the specified pattern and options.
  *
  * @param pattern Glob pattern
@@ -9,7 +14,7 @@ import * as glob from 'glob'
 export function findClasses(
   pattern: string,
   opts?: glob.IOptions
-): Array<Function> {
+): Array<Constructor> {
   const result = glob.sync(pattern, opts)
   return result
     .map(path => {
