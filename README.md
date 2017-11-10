@@ -68,16 +68,22 @@ The framework adapter will use the tools provided by this package to extract rou
 
 This example uses Koa + Koa Router for demo purposes.
 
+**Don't use this example verbatim, package it up and make it a bit nicer. 😁**
+
 ```js
-import { getState, rollUpState } from 'awilix-router-core'
+import { getState, rollUpState, findClasses } from 'awilix-router-core'
 import Koa from 'koa'
 import Router from 'koa-router'
 
-function register (Controller) {
-  const state = getState(Controller)
+function register (router, Class) {
+  const state = getState(Class)
+  if (!state) {
+    // No routing configured for this class.
+    return
+  }
+
   // This will return a `Map` where the key is the controller function name, and the value is a concatted routing config.
   const concatted = rollUpState(state)
-  const router = new Router()
   concatted.forEach((cfg, key) => {
     cfg.methods.forEach(method => {
       if (method === '*') {
@@ -88,7 +94,7 @@ function register (Controller) {
         cfg.paths,
         ...cfg.beforeMiddleware,
         async (ctx, ...rest) => {
-          const instance = new Controller(ctx.state.container.cradle)
+          const instance = new Class(ctx.state.container.cradle)
           await instance[key](ctx, ...rest)
         },
         ...cfg.afterMiddleware
@@ -98,7 +104,10 @@ function register (Controller) {
   return router
 }
 
-const router = register(Controller)
+const router = new Router()
+// uses glob to auto-load classes.
+const classes = findClasses('routes/*.js', { cwd: __dirname })
+classes.forEach(Class => register(router, Class))
 const app = new Koa()
 app.use(router.routes())
 app.use(router.allowedMethods())
