@@ -39,4 +39,17 @@ describe('rollUpState', () => {
     expect(m1.afterMiddleware).toEqual(['afterm1', 'afterRoot1', 'afterRoot2'])
     expect(m1.methods).toEqual([HttpMethods.POST, HttpMethods.GET])
   })
+
+  it('returns child paths as-is when there are no root paths', () => {
+    class Test {
+      @route('/test1')
+      @route('/test2')
+      method() {
+        /**/
+      }
+    }
+
+    const result = rollUpState(getState(Test)!)
+    expect(result.get('method')!.paths).toEqual(['/test2', '/test1'])
+  })
 })

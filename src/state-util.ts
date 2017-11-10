@@ -150,6 +150,10 @@ export function rollUpState(
  */
 function concatPaths(rootPaths: Array<string>, methodPaths: Array<string>) {
   const result: Array<string> = []
+  if (rootPaths.length === 0) {
+    return [...methodPaths]
+  }
+
   rootPaths.forEach(rootPath => {
     methodPaths.forEach(methodPath => {
       result.push(rootPath + methodPath)
