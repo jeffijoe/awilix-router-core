@@ -1,11 +1,31 @@
 import { HttpVerb } from './http-verbs'
 import { uniq } from './util'
-import { STATE } from './symbols'
+import { STATE, IS_CONTROLLER_BUILDER } from './symbols'
+import { IAwilixControllerBuilder } from './controller'
 
 /**
  * Middleware decorator parameter.
  */
 export type MiddlewareParameter = Array<any> | any
+
+/**
+ * Basic constructor type.
+ */
+export type Constructor = new (...args: Array<any>) => any
+
+/**
+ * Target to instantiate and it's router state.
+ */
+export interface IStateAndTarget {
+  /**
+   * The target to call.
+   */
+  target: Constructor | Function
+  /**
+   * Routing state to configure.
+   */
+  state: IRouterConfigState
+}
 
 /**
  * Router config state.
@@ -145,6 +165,28 @@ export function rollUpState(
     })
   })
   return result
+}
+
+/**
+ * Given a decorated class or a controller builder, returns a normalized
+ * target + state object. For example, if using the controller builder,
+ * we need to use the `target` property. If using decorators, the required
+ * value *is* the target.
+ *
+ * @param src
+ * @returns The normalized target + state, or `null` if not applicable.
+ */
+export function getStateAndTarget(src: any): IStateAndTarget | null {
+  const state = getState(src)
+  if (!state) {
+    return null
+  }
+
+  const target = src[IS_CONTROLLER_BUILDER]
+    ? (src as IAwilixControllerBuilder).target
+    : src
+
+  return { target, state }
 }
 
 /**

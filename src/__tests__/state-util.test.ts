@@ -1,6 +1,7 @@
-import { rollUpState, getState } from '../state-util'
+import { rollUpState, getState, getStateAndTarget } from '../state-util'
 import { route, before, after, GET, POST } from '../decorators'
 import { HttpVerbs } from '../http-verbs'
+import { createController } from '../controller'
 
 describe('rollUpState', () => {
   it('rolls up config correctly', () => {
@@ -70,5 +71,34 @@ describe('rollUpState', () => {
     const result = rollUpState(getState(Test)!)
     expect(result.get('get')!.paths).toEqual(['/root'])
     expect(result.get('post')!.paths).toEqual(['/root'])
+  })
+})
+
+describe('getStateAndTarget', () => {
+  it('returns the correct state and target for decorated classes', () => {
+    @route('/test')
+    class Test {
+      @GET()
+      method() {
+        /**/
+      }
+    }
+
+    const { target, state } = getStateAndTarget(Test)!
+    expect(target).toBe(Test)
+    expect(state.methods.get('method')!.verbs).toContain(HttpVerbs.GET)
+  })
+
+  it('returns the correct state and target for controller builders', () => {
+    class Test {
+      method() {
+        /**/
+      }
+    }
+
+    const controller = createController(Test).get('/', 'method')
+    const { target, state } = getStateAndTarget(controller)!
+    expect(target).toBe(Test)
+    expect(state.methods.get('method')!.verbs).toContain(HttpVerbs.GET)
   })
 })
