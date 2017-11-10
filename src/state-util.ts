@@ -1,4 +1,10 @@
 import { HttpMethod } from './http-methods'
+import { uniq } from './util'
+
+/**
+ * Middleware decorator parameter.
+ */
+export type MiddlewareParameter = Array<any> | any
 
 /**
  * Symbol used for getting and setting the config state.
@@ -143,6 +149,65 @@ export function rollUpState(
     })
   })
   return result
+}
+
+/**
+ * Adds a route to the config.
+ *
+ * @param config
+ * @param path
+ */
+export function addRoute(config: IRouteConfig, path: string) {
+  config.paths = uniq([...config.paths, path])
+  return config
+}
+
+/**
+ * Adds middleware that runs before the method on the specified config.
+ *
+ * @param config
+ * @param middleware
+ */
+export function addBeforeMiddleware(
+  config: IRouteConfig,
+  middleware: MiddlewareParameter
+) {
+  addMiddleware(config.beforeMiddleware, middleware)
+  return config
+}
+
+/**
+ * Adds middleware that runs after the method on the specified config.
+ *
+ * @param config
+ * @param middleware
+ */
+export function addAfterMiddleware(
+  config: IRouteConfig,
+  middleware: MiddlewareParameter
+) {
+  addMiddleware(config.afterMiddleware, middleware)
+  return config
+}
+
+/**
+ * Adds methods to the specified route config, and depupes the resulting array.
+ *
+ * @param config
+ * @param value
+ */
+export function addMethods(config: IRouteConfig, value: Array<HttpMethod>) {
+  config.methods = uniq([...config.methods, ...value])
+}
+
+/**
+ * Adds a middleware to the end of the target array.
+ *
+ * @param targetArray
+ * @param value
+ */
+function addMiddleware(targetArray: Array<any>, value: MiddlewareParameter) {
+  Array.isArray(value) ? targetArray.push(...value) : targetArray.push(value)
 }
 
 /**

@@ -1,12 +1,13 @@
 import { HttpMethod, HttpMethods } from './http-methods'
 import { invariant } from './invariant'
-import { uniq } from './util'
-import { getOrInitConfigForDecorator, IRouteConfig } from './state-util'
-
-/**
- * Middleware decorator parameter.
- */
-export type MiddlewareParameter = Array<any> | any
+import {
+  getOrInitConfigForDecorator,
+  addRoute,
+  addBeforeMiddleware,
+  addAfterMiddleware,
+  addMethods,
+  MiddlewareParameter
+} from './state-util'
 
 /**
  * Registers a path for this class method.
@@ -20,8 +21,7 @@ export function route(path: string) {
     name?: string,
     descriptor?: PropertyDescriptor
   ) {
-    const config = getOrInitConfigForDecorator(target, name)
-    config.paths = uniq([...config.paths, path])
+    addRoute(getOrInitConfigForDecorator(target, name), path)
   }
 }
 
@@ -38,8 +38,7 @@ export function before(middleware: MiddlewareParameter) {
     name?: string,
     descriptor?: PropertyDescriptor
   ) {
-    const config = getOrInitConfigForDecorator(target, name)
-    addMiddleware(config.beforeMiddleware, middleware)
+    addBeforeMiddleware(getOrInitConfigForDecorator(target, name), middleware)
   }
 }
 
@@ -56,8 +55,7 @@ export function after(middleware: MiddlewareParameter) {
     name?: string,
     descriptor?: PropertyDescriptor
   ) {
-    const config = getOrInitConfigForDecorator(target, name)
-    addMiddleware(config.afterMiddleware, middleware)
+    addAfterMiddleware(getOrInitConfigForDecorator(target, name), middleware)
   }
 }
 
@@ -120,23 +118,3 @@ export const PATCH = () => methods([HttpMethods.PATCH])
  * The same as `methods([HttpMethods.ALL])`
  */
 export const ALL = () => methods([HttpMethods.ALL])
-
-/**
- * Adds a middleware to the end of the target array.
- *
- * @param targetArray
- * @param value
- */
-function addMiddleware(targetArray: Array<any>, value: MiddlewareParameter) {
-  Array.isArray(value) ? targetArray.push(...value) : targetArray.push(value)
-}
-
-/**
- * Adds methods to the specified route config, and depupes the resulting array.
- *
- * @param config
- * @param value
- */
-function addMethods(config: IRouteConfig, value: Array<HttpMethod>) {
-  config.methods = uniq([...config.methods, ...value])
-}
