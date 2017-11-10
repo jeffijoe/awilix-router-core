@@ -1,4 +1,3 @@
-import { Constructor } from './find-classes'
 import {
   MiddlewareParameter,
   createState,
@@ -9,7 +8,7 @@ import {
   addAfterMiddleware
 } from './state-util'
 import { HttpVerbs } from './http-verbs'
-import { HttpVerb } from 'src'
+import { HttpVerb, Constructor } from 'src'
 import { STATE, IS_CONTROLLER_BUILDER } from './symbols'
 
 /**
