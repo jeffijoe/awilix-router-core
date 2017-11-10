@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0
+## 1.1.0
 
 * Added `createController` as an alternative to using decorators.
 
