@@ -97,6 +97,148 @@ The framework adapter will use the tools provided by this package to extract rou
 
 Check out the [`awilix-koa`](https://github.com/jeffijoe/awilix-koa/tree/master/src/controller.ts) reference implementation.
 
+# API
+
+As mentioned earlier, this package exposes the user-facing route declaration API, as well as utilities needed for framework adapter authors.
+
+## Route Declaration
+
+There are 2 flavors of route declaration: **builder** and **ESNext decorators**.
+
+### Builder
+
+The builder API's top level exports is
+
+```js
+import { createController, HttpVerbs } from 'awilix-router-core'
+```
+
+#### `createController(targetClassOrFunction)`
+
+Creates a controller that will invoke methods on an instance of the specified `targetClassOrFunction`.
+
+The controller exposes the following builder methods:
+
+* `.get|post|put|patch|delete|head|options|connect|all(path, method, opts)`: shorthands for `.verbs([HttpVerbs.POST], ...)` - see [`HttpVerbs`][http-verbs] for possible values.
+* `.verbs(verbs, path, method, opts)`: registers a path mapping for the specified controller method.
+* `.prefix(path)`: registers a prefix for the controller. Calling this multiple times adds multiple prefix options.
+* `.before(middlewares)`: registers one or more middlewares that runs before any of the routes are processed.
+* `.after(middlewares)`: registers one or more middlewares that runs after the routes are processed.
+
+The optional `opts` object passed to `.verbs` can have the following properties:
+
+* `before`: one or more middleware that runs before the route handler.
+* `after`: one or more middleware that runs after the route handler.
+
+### Decorators
+
+If you have enabled decorator support in your transpiler, you can use the decorator API.
+
+The decorator API exports are:
+
+```js
+import { 
+  route, 
+  before,
+  after, 
+  verbs,
+  HttpVerbs,
+
+  // The following are just shortcuts for `verbs([HttpVerbs..])`
+  GET,
+  HEAD,
+  POST,
+  PUT,
+  DELETE,
+  CONNECT,
+  OPTIONS,
+  PATCH,
+  ALL
+} from 'awilix-router-core'
+```
+
+#### `route(path)`
+
+**Class-level**: adds a prefix to all routes in this controller.
+
+**Method-level**: adds a route for the decorated method in the controller.
+
+Has no effect if no `verbs` are configured.
+
+**Example**:
+
+```js
+@route('/todos')
+class Controller {
+  // GET /todos
+  // POST /todos
+  @GET()
+  @POST()
+  method1() {}
+
+  // PATCH /todos/:id
+  @route('/:id')
+  @PATCH()
+  method2() {}
+}
+```
+
+#### `before(path)` and `after(path)`
+
+**Class-level**: adds middleware to run before/after the routes are processed.
+
+**Method-level**: adds middleware to run before/after the decorated method is processed.
+
+**Example**:
+
+```js
+@before([bodyParser()])
+class Controller {
+  @before([authenticate()])
+  @after([compress()])
+  method() {}
+}
+```
+
+#### `verbs(httpVerbs)`
+
+**Class-level**: not allowed.
+
+**Method-level**: adds HTTP verbs that the route will match. 
+
+Has no effect if no `route`s are configured.
+
+**Example**:
+
+```js
+@verbs([HttpVerbs.GET, HttpVerbs.POST])
+method() {}
+```
+
+#### Verb shorthands
+
+`GET`, `POST`, etc.
+
+**Example**:
+
+```js
+@route('/todos')
+class Controller {
+  // GET /todos
+  // POST /todos
+  @GET()
+  @POST()
+  method1() {}
+
+  // PATCH /todos/:id
+  @route('/:id')
+  @PATCH()
+  method2() {}
+}
+```
+
 # Author
 
 Jeff Hansen — [@Jeffijoe](https://twitter.com/Jeffijoe)
+
+  [http-verbs]: /src/http-verbs.ts
