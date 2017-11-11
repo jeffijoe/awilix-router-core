@@ -11,19 +11,21 @@
     "build": "rimraf lib && tsc -p tsconfig.build.json",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "lint":
-      "tslint --project tsconfig.json --fix \"src/**/*.ts\" && prettier --write \"src/**/*.ts\"",
+    "lint": "tslint --project tsconfig.json --fix \"src/**/*.ts\" && prettier --write \"src/**/*.ts\"",
     "cover": "jest --coverage",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "precommit": "lint-staged",
-    "semantic-release":
-      "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jeffijoe/awilix-router-core.git"
   },
-  "files": ["lib", "LICENSE.md", "README.md"],
+  "files": [
+    "lib",
+    "LICENSE.md",
+    "README.md"
+  ],
   "directories": {
     "lib": "lib"
   },
@@ -42,14 +44,14 @@
     "@semantic-release/condition-codeship": "^1.1.0",
     "@semantic-release/release-notes-generator": "^5.0.2",
     "@types/glob": "^5.0.33",
-    "@types/jest": "^21.1.5",
-    "@types/node": "^8.0.50",
+    "@types/jest": "^21.1.6",
+    "@types/node": "^8.0.51",
     "@types/prettier": "^1.8.0",
     "@types/rimraf": "^2.0.2",
     "coveralls": "^3.0.0",
     "husky": "^0.14.3",
     "jest": "^21.2.1",
-    "lint-staged": "^4.3.0",
+    "lint-staged": "^5.0.0",
     "prettier": "^1.8.2",
     "rimraf": "^2.6.1",
     "semantic-release": "^8.2.0",
@@ -71,14 +73,24 @@
     "testEnvironment": "node",
     "mapCoverage": true,
     "testRegex": "(/__tests__/.*\\.(test|spec))\\.(ts|tsx|js)$",
-    "collectCoverageFrom": ["src/**/*.ts"],
-    "coveragePathIgnorePatterns": ["/node_modules/"],
-    "modulePaths": ["src"],
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "modulePaths": [
+      "src"
+    ],
     "coverageDirectory": "<rootDir>/coverage",
     "transform": {
       "\\.(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
-    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
     "globals": {}
   },
   "prettier": {
@@ -89,8 +101,14 @@
     "generateNotes": "@semantic-release/release-notes-generator",
     "analyzeCommits": {
       "path": "semantic-release-conventional-commits",
-      "majorTypes": ["major", "breaking"],
-      "minorTypes": ["feat", "minor"],
+      "majorTypes": [
+        "major",
+        "breaking"
+      ],
+      "minorTypes": [
+        "feat",
+        "minor"
+      ],
       "patchTypes": [
         "chore",
         "fix",
