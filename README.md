@@ -107,7 +107,7 @@ There are 2 flavors of route declaration: **builder** and **ESNext decorators**.
 
 ### Builder
 
-The builder API's top level exports is
+The builder API's top level exports are:
 
 ```js
 import { createController, HttpVerbs } from 'awilix-router-core'
@@ -183,7 +183,7 @@ class Controller {
 }
 ```
 
-#### `before(path)` and `after(path)`
+#### `before(middlewares)` and `after(middlewares)`
 
 **Class-level**: adds middleware to run before/after the routes are processed.
 
@@ -237,8 +237,37 @@ class Controller {
 }
 ```
 
+## Extracting route config
+
+This section is for framework adapter authors. Please see [awilix-koa][awilix-koa] for a reference implementation. If you need any help, please feel free to reach out!
+
+The primary functions needed for this are `getStateAndTarget`, `rollUpState`, and `findControllers`.
+
+> **NOTE**: when referring to "state-target tuple", it means an object containing `state` 
+> and `target` properties, where `target` is the class/function to build up (using `container.build`) 
+> in order to get an object to call methods on.
+
+```js
+import { getStateAndTarget, rollUpState, findControllers } from 'awilix-router-core'
+```
+
+### `getStateAndTarget(functionOrClassOrController)`
+
+Given a controller (either from `createController` or a decorated class), returns a state-target tuple.
+
+### `rollUpState(state)`
+
+This will return a map where the key is the controller method name and the value is the routing config to set up for that method, with root paths + middleware stacks pre-merged.
+
+### `findControllers(pattern, globOptions)`
+
+Using `glob`, loads controllers from matched files, with non-applicable files filtered out.
+
+Returns an array of state-target tuples.
+
 # Author
 
 Jeff Hansen — [@Jeffijoe](https://twitter.com/Jeffijoe)
 
   [http-verbs]: /src/http-verbs.ts
+  [awilix-koa]: https://github.com/jeffijoe/awilix-koa
