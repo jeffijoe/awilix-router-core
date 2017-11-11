@@ -10,6 +10,29 @@
 
 > This package is intended for use with HTTP libraries that want to configure routes using **ESNext decorators** or a **builder pattern**.
 
+# Table of Contents
+
+* [Install](#install)
+* [Example](#example)
+  * [With decorators](#with-decorators)
+  * [With builder pattern](#with-builder-pattern)
+* [For framework adapter authors](#for-framework-adapter-authors)
+* [API](#api)
+  * [Route Declaration](#route-declaration)
+      * [Builder](#builder)
+        * [createController(targetClassOrFunction)](#createcontrollertargetclassorfunction)
+      * [Decorators](#decorators)
+        * [route(path)](#routepath)
+        * [before(middlewares) and <code>after(middlewares)</code>](#beforemiddlewares-and-aftermiddlewares)
+        * [verbs(httpVerbs)](#verbshttpverbs)
+        * [Verb shorthands](#verb-shorthands)
+  * [Extracting route config](#extracting-route-config)
+      * [getStateAndTarget(functionOrClassOrController)](#getstateandtargetfunctionorclassorcontroller)
+      * [rollUpState(state)](#rollupstatestate)
+      * [findControllers(pattern, globOptions)](#findcontrollerspattern-globoptions)
+* [Author](#author)
+
+
 # Install
 
 With `npm`:
@@ -95,7 +118,7 @@ export default createController(api)
 
 The framework adapter will use the tools provided by this package to extract routing config from decorated classes and register it in the router of choice.
 
-Check out the [`awilix-koa`](https://github.com/jeffijoe/awilix-koa/tree/master/src/controller.ts) reference implementation.
+Check out the [`awilix-koa`](https://github.com/jeffijoe/awilix-koa/tree/master/src/controller.ts) reference implementation, as well as the [API docs](#extracting-route-config) here.
 
 # API
 

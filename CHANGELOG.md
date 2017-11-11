@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.2
+
+* More API docs.
+
+## 1.2.1
+
+* Added API docs.
+
 ## 1.2.0
 
 * Added `getStateAndTarget` utility.
