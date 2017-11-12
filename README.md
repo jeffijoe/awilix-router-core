@@ -55,7 +55,7 @@ The end-user of the routing library will be able to use decorators or a builder 
 
 ```js
 // You may re-export these as well.
-import { route, before, GET, methods, HttpVerbs } from 'awilix-router-core'
+import { route, before, GET, verbs, HttpVerbs } from 'awilix-router-core'
 
 import bodyParser from 'your-framework-body-parser'
 import authenticate from 'your-framework-authentication'
@@ -79,7 +79,7 @@ export default class NewsController {
   }
 
   @route('(/:id)')
-  @methods([HttpVerbs.POST, HttpVerbs.PUT])
+  @verbs([HttpVerbs.POST, HttpVerbs.PUT])
   @before(authenticate())
   async save (ctx) {
     ctx.body = await this.service.saveNews(ctx.params.id, ctx.request.body)
