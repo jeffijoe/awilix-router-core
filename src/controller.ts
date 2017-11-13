@@ -2,13 +2,12 @@ import {
   MiddlewareParameter,
   createState,
   addHttpVerbs,
-  getOrInitMethodConfig,
   addRoute,
   addBeforeMiddleware,
   addAfterMiddleware
 } from './state-util'
 import { HttpVerbs } from './http-verbs'
-import { HttpVerb, Constructor } from 'src'
+import { HttpVerb, Constructor, IRouterConfigState } from 'src'
 import { STATE, IS_CONTROLLER_BUILDER } from './symbols'
 
 /**
@@ -76,7 +75,20 @@ export interface IAwilixControllerBuilder {
 export function createController(
   ClassOrFunction: Constructor | Function
 ): IAwilixControllerBuilder {
-  const state = createState()
+  return createControllerFromState(ClassOrFunction, createState())
+}
+
+/**
+ * Creates a builder from existing state.
+ * This is used internally, but exported for convenience.
+ *
+ * @param ClassOrFunction The target to invoke.
+ * @param state Existing state to continue building on.
+ */
+export function createControllerFromState(
+  ClassOrFunction: Constructor | Function,
+  state: IRouterConfigState
+) {
   const builder: IAwilixControllerBuilder = {
     [STATE]: state,
     [IS_CONTROLLER_BUILDER]: true,
@@ -91,31 +103,37 @@ export function createController(
     connect: createVerbFunction(HttpVerbs.CONNECT),
     all: createVerbFunction(HttpVerbs.ALL),
     prefix(path) {
-      addRoute(state.root, path)
-      return builder
+      return createControllerFromState(
+        ClassOrFunction,
+        addRoute(state, null, path)
+      )
     },
     before(middleware) {
-      addBeforeMiddleware(state.root, middleware)
-      return builder
+      return createControllerFromState(
+        ClassOrFunction,
+        addBeforeMiddleware(state, null, middleware)
+      )
     },
     after(middleware) {
-      addAfterMiddleware(state.root, middleware)
-      return builder
+      return createControllerFromState(
+        ClassOrFunction,
+        addAfterMiddleware(state, null, middleware)
+      )
     },
     verbs(verbs, path, method, opts) {
-      const methodConfig = getOrInitMethodConfig(state, method)
-      addRoute(methodConfig, path)
-      addHttpVerbs(methodConfig, verbs)
+      state = addRoute(state, method, path)
+      state = addHttpVerbs(state, method, verbs)
       if (opts) {
         if (opts.before) {
-          addBeforeMiddleware(methodConfig, opts.before)
+          state = addBeforeMiddleware(state, method, opts.before)
         }
 
         if (opts.after) {
-          addAfterMiddleware(methodConfig, opts.after)
+          state = addAfterMiddleware(state, method, opts.after)
         }
       }
-      return builder
+
+      return createControllerFromState(ClassOrFunction, state)
     }
   }
 

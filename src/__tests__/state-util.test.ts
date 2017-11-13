@@ -1,4 +1,13 @@
-import { rollUpState, getState, getStateAndTarget } from '../state-util'
+import {
+  rollUpState,
+  getState,
+  getStateAndTarget,
+  createState,
+  addRoute,
+  addHttpVerbs,
+  addBeforeMiddleware,
+  addAfterMiddleware
+} from '../state-util'
 import { route, before, after, GET, POST } from '../decorators'
 import { HttpVerbs } from '../http-verbs'
 import { createController } from '../controller'
@@ -100,5 +109,23 @@ describe('getStateAndTarget', () => {
     const { target, state } = getStateAndTarget(controller)!
     expect(target).toBe(Test)
     expect(state.methods.get('method')!.verbs).toContain(HttpVerbs.GET)
+  })
+})
+
+describe('all utilities', () => {
+  it('are immutable', () => {
+    const initial = createState()
+    let updated = addRoute(initial, null, '/wee')
+    updated = addRoute(initial, 'test', '/wee')
+    updated = addHttpVerbs(initial, 'test', [HttpVerbs.GET])
+    updated = addAfterMiddleware(initial, null, 'm1')
+    updated = addAfterMiddleware(initial, 'test', 'm1')
+    updated = addBeforeMiddleware(initial, null, 'm1')
+    updated = addBeforeMiddleware(initial, 'test', 'm1')
+
+    // Verifies the state is still empty.
+    expect(initial.root.paths).toEqual([])
+    expect(initial).not.toBe(updated)
+    expect(Array.from(initial.methods.entries()).length).toBe(0)
   })
 })

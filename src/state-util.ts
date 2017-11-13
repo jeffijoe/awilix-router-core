@@ -64,83 +64,6 @@ export interface IRouteConfig {
 }
 
 /**
- * Gets or initializes a method config.
- *
- * @param state
- * @param name
- */
-export function getOrInitMethodConfig(state: IRouterConfigState, name: string) {
-  const config = state.methods.get(name)
-  if (!config) {
-    const newConfig = createRouteConfig()
-    state.methods.set(name, newConfig)
-    return newConfig
-  }
-
-  return config
-}
-
-/**
- * Gets the config state from the target.
- *
- * @param target
- */
-export function getState(target: any): IRouterConfigState | null {
-  return (target.prototype ? target.prototype[STATE] : target[STATE]) || null
-}
-
-/**
- * Sets the config state on the target.
- * @param target
- * @param state
- */
-export function setState(target: any, state: IRouterConfigState) {
-  if (target.prototype) {
-    target.prototype[STATE] = state
-  } else {
-    target[STATE] = state
-  }
-  return state
-}
-
-/**
- * Gets or initializes the configuration for a decorator.
- * If it's a method decorator, we initialize and return one of those,
- * else we return the root config.
- *
- * @param target
- * @param name
- */
-export function getOrInitConfigForDecorator(target: any, name?: string) {
-  const state = getState(target) || setState(target, createState())
-  const config = name ? getOrInitMethodConfig(state, name) : state.root
-  return config
-}
-
-/**
- * Creates a new state object.
- */
-export function createState(): IRouterConfigState {
-  const state: IRouterConfigState = {
-    root: createRouteConfig(),
-    methods: new Map<string, IRouteConfig>()
-  }
-  return state
-}
-
-/**
- * Creates a new route config object.
- */
-export function createRouteConfig(): IRouteConfig {
-  return {
-    paths: [],
-    beforeMiddleware: [],
-    afterMiddleware: [],
-    verbs: []
-  }
-}
-
-/**
  * Rolls up state so paths are joined, middleware rolled into
  * the correct order, etc.
  *
@@ -190,52 +113,207 @@ export function getStateAndTarget(src: any): IStateAndTarget | null {
 }
 
 /**
- * Adds a route to the config.
+ * Adds a route to the state.
  *
- * @param config
+ * @param state
+ * @param methodName
  * @param path
  */
-export function addRoute(config: IRouteConfig, path: string) {
-  config.paths = uniq([...config.paths, path])
-  return config
+export function addRoute(
+  state: IRouterConfigState,
+  methodName: string | null,
+  path: string
+) {
+  const config = getOrCreateConfig(state, methodName)
+  return updateConfig(state, methodName, {
+    paths: uniq([...config.paths, path])
+  })
 }
 
 /**
  * Adds middleware that runs before the method on the specified config.
  *
- * @param config
+ * @param state
+ * @param methodName
  * @param middleware
  */
 export function addBeforeMiddleware(
-  config: IRouteConfig,
+  state: IRouterConfigState,
+  methodName: string | null,
   middleware: MiddlewareParameter
 ) {
-  addMiddleware(config.beforeMiddleware, middleware)
-  return config
+  const config = getOrCreateConfig(state, methodName)
+  return updateConfig(state, methodName, {
+    beforeMiddleware: addMiddleware(config.beforeMiddleware, middleware)
+  })
 }
 
 /**
  * Adds middleware that runs after the method on the specified config.
  *
- * @param config
+ * @param state
+ * @param methodName
  * @param middleware
  */
 export function addAfterMiddleware(
-  config: IRouteConfig,
+  state: IRouterConfigState,
+  methodName: string | null,
   middleware: MiddlewareParameter
 ) {
-  addMiddleware(config.afterMiddleware, middleware)
+  const config = getOrCreateConfig(state, methodName)
+  return updateConfig(state, methodName, {
+    afterMiddleware: addMiddleware(config.afterMiddleware, middleware)
+  })
+}
+
+/**
+ * Adds middleware that runs after the method on the specified config.
+ *
+ * @param state
+ * @param methodName
+ * @param value
+ */
+export function addHttpVerbs(
+  state: IRouterConfigState,
+  methodName: string | null,
+  value: Array<HttpVerb>
+) {
+  const config = getOrCreateConfig(state, methodName)
+  return updateConfig(state, methodName, {
+    verbs: uniq([...config.verbs, ...value])
+  })
+}
+
+/**
+ * Gets or creates a method config.
+ *
+ * @param state
+ * @param methodName
+ */
+export function getOrCreateConfig(
+  state: IRouterConfigState,
+  methodName: string | null
+) {
+  const config =
+    methodName === null ? state.root : state.methods.get(methodName)
+
+  if (!config) {
+    return createRouteConfig()
+  }
+
   return config
 }
 
 /**
- * Adds http methods to the specified route config, and depupes the resulting array.
+ * Gets the config state from the target.
  *
- * @param config
- * @param value
+ * @param target
  */
-export function addHttpVerbs(config: IRouteConfig, value: Array<HttpVerb>) {
-  config.verbs = uniq([...config.verbs, ...value])
+export function getState(target: any): IRouterConfigState | null {
+  return (target.prototype ? target.prototype[STATE] : target[STATE]) || null
+}
+
+/**
+ * Sets the config state on the target.
+ *
+ * @param target
+ * @param state
+ */
+export function setState(target: any, state: IRouterConfigState) {
+  if (target.prototype) {
+    target.prototype[STATE] = state
+  } else {
+    target[STATE] = state
+  }
+  return state
+}
+
+/**
+ * Updates the state on the specified target by invoking the callback with the previous state.
+ *
+ * @param target
+ * @param updater
+ */
+export function updateState(
+  target: any,
+  updater: (state: IRouterConfigState) => IRouterConfigState
+) {
+  setState(target, updater(getOrInitStateForDecoratorTarget(target)))
+}
+
+/**
+ * Gets or initializes the state for a decorated target
+ *
+ * @param target
+ * @param name
+ */
+export function getOrInitStateForDecoratorTarget(target: any) {
+  return getState(target) || createState()
+}
+
+/**
+ * Creates a new state object.
+ */
+export function createState(): IRouterConfigState {
+  const state: IRouterConfigState = {
+    root: createRouteConfig(),
+    methods: new Map<string, IRouteConfig>()
+  }
+  return state
+}
+
+/**
+ * Updates a config on a state, returns the new state.
+ *
+ * @param state
+ * Existing state.
+ *
+ * @param methodName
+ * If null, updates the root config. Else, the method config.
+ *
+ * @param newConfig
+ * Config to shallow-merge in.
+ */
+export function updateConfig(
+  state: IRouterConfigState,
+  methodName: string | null,
+  newConfig: Partial<IRouteConfig>
+): IRouterConfigState {
+  const existing = getOrCreateConfig(state, methodName)
+  const mergedConfig: IRouteConfig = {
+    ...existing,
+    ...newConfig
+  }
+
+  // Root update is simple.
+  if (methodName === null) {
+    return {
+      ...state,
+      root: mergedConfig
+    }
+  }
+
+  // Filters out the entry we're replacing.
+  const filteredEntries = Array.from(state.methods.entries()).filter(
+    ([key]) => key !== methodName
+  )
+
+  return {
+    ...state,
+    methods: new Map([...filteredEntries, [methodName, mergedConfig]])
+  }
+}
+
+/**
+ * Creates a new route config object.
+ */
+export function createRouteConfig(): IRouteConfig {
+  return {
+    paths: [],
+    beforeMiddleware: [],
+    afterMiddleware: [],
+    verbs: []
+  }
 }
 
 /**
@@ -245,18 +323,20 @@ export function addHttpVerbs(config: IRouteConfig, value: Array<HttpVerb>) {
  * @param value
  */
 function addMiddleware(targetArray: Array<any>, value: MiddlewareParameter) {
-  Array.isArray(value) ? targetArray.push(...value) : targetArray.push(value)
+  return Array.isArray(value)
+    ? [...targetArray, ...value]
+    : [...targetArray, value]
 }
 
 /**
  * Concatenates root and method paths so we have one for each combination.
  */
 function concatPaths(rootPaths: Array<string>, methodPaths: Array<string>) {
-  const result: Array<string> = []
   if (rootPaths.length === 0) {
     return [...methodPaths]
   }
 
+  const result: Array<string> = []
   rootPaths.forEach(rootPath => {
     if (methodPaths.length === 0) {
       result.push(rootPath)

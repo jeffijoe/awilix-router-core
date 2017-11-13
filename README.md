@@ -130,7 +130,7 @@ There are 2 flavors of route declaration: **builder** and **ESNext decorators**.
 
 ### Builder
 
-The builder API's top level exports are:
+The builder API's public top level exports are:
 
 ```js
 import { createController, HttpVerbs } from 'awilix-router-core'
@@ -152,6 +152,9 @@ The optional `opts` object passed to `.verbs` can have the following properties:
 
 * `before`: one or more middleware that runs before the route handler.
 * `after`: one or more middleware that runs after the route handler.
+
+**Note**: all builder methods returns a _new builder_ - this means the builder is **immutable**! This allows you to have a common 
+builder setup that you can reuse for multiple controllers.
 
 ### Decorators
 

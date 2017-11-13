@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+
+* Feature: internal state + controller builder is now immutable.
+
 ## 1.2.2
 
 * More API docs.
