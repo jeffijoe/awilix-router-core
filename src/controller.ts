@@ -4,10 +4,11 @@ import {
   addHttpVerbs,
   addRoute,
   addBeforeMiddleware,
+  Constructor,
+  IRouterConfigState,
   addAfterMiddleware
 } from './state-util'
-import { HttpVerbs } from './http-verbs'
-import { HttpVerb, Constructor, IRouterConfigState } from 'src'
+import { HttpVerbs, HttpVerb } from './http-verbs'
 import { STATE, IS_CONTROLLER_BUILDER } from './symbols'
 
 /**
