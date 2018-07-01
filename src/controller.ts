@@ -42,6 +42,7 @@ export interface IAwilixControllerBuilder {
   options: VerbBuilderFunction
   connect: VerbBuilderFunction
   all: VerbBuilderFunction
+  rpc: VerbBuilderFunction
   verbs(
     verbs: Array<HttpVerb>,
     path: string,
@@ -103,6 +104,7 @@ export function createControllerFromState(
     options: createVerbFunction(HttpVerbs.OPTIONS),
     connect: createVerbFunction(HttpVerbs.CONNECT),
     all: createVerbFunction(HttpVerbs.ALL),
+    rpc: createVerbFunction(HttpVerbs.ALL),
     prefix(path) {
       return createControllerFromState(
         ClassOrFunction,

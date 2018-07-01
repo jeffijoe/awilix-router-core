@@ -8,7 +8,7 @@
 [![npm](https://img.shields.io/npm/dt/awilix-router-core.svg?maxAge=1000)](https://www.npmjs.com/package/awilix-router-core)
 [![npm](https://img.shields.io/npm/l/awilix-router-core.svg?maxAge=1000)](https://github.com/jeffijoe/awilix-router-core/blob/master/LICENSE.md)
 
-> This package is intended for use with HTTP libraries that want to configure routes using **ESNext decorators** or a **builder pattern**.
+> This package is intended for use with HTTP or RPC libraries that want to configure routes using **ESNext decorators** or a **builder pattern**.
 
 # Table of Contents
 
@@ -101,7 +101,7 @@ const api = ({ service }) => ({
   find: async () => (ctx.body = await service.doSomethingAsync()),
   get: async (ctx) => (ctx.body = await service.getNewsOrWhateverAsync(ctx.params.id)),
   save: async (ctx) => (ctx.body = await service.saveNews(ctx.params.id, ctx.request.body))
-}) 
+})
 
 export default createController(api)
   .before(bodyParser())
@@ -143,6 +143,7 @@ Creates a controller that will invoke methods on an instance of the specified `t
 The controller exposes the following builder methods:
 
 * `.get|post|put|patch|delete|head|options|connect|all(path, method, opts)`: shorthands for `.verbs([HttpVerbs.POST], ...)` - see [`HttpVerbs`][http-verbs] for possible values.
+* `.rpc(path, method, opts)`: registers an rpc path mapping for the specified controller method (internally, synonymous with .all)
 * `.verbs(verbs, path, method, opts)`: registers a path mapping for the specified controller method.
 * `.prefix(path)`: registers a prefix for the controller. Calling this multiple times adds multiple prefix options.
 * `.before(middlewares)`: registers one or more middlewares that runs before any of the routes are processed.
@@ -153,7 +154,7 @@ The optional `opts` object passed to `.verbs` can have the following properties:
 * `before`: one or more middleware that runs before the route handler.
 * `after`: one or more middleware that runs after the route handler.
 
-**Note**: all builder methods returns a _new builder_ - this means the builder is **immutable**! This allows you to have a common 
+**Note**: all builder methods returns a _new builder_ - this means the builder is **immutable**! This allows you to have a common
 builder setup that you can reuse for multiple controllers.
 
 ### Decorators
@@ -163,10 +164,10 @@ If you have enabled decorator support in your transpiler, you can use the decora
 The decorator API exports are:
 
 ```js
-import { 
-  route, 
+import {
+  route,
   before,
-  after, 
+  after,
   verbs,
   HttpVerbs,
 
@@ -230,7 +231,7 @@ class Controller {
 
 **Class-level**: not allowed.
 
-**Method-level**: adds HTTP verbs that the route will match. 
+**Method-level**: adds HTTP verbs that the route will match.
 
 Has no effect if no `route`s are configured.
 
@@ -269,8 +270,8 @@ This section is for framework adapter authors. Please see [awilix-koa][awilix-ko
 
 The primary functions needed for this are `getStateAndTarget`, `rollUpState`, and `findControllers`.
 
-> **NOTE**: when referring to "state-target tuple", it means an object containing `state` 
-> and `target` properties, where `target` is the class/function to build up (using `container.build`) 
+> **NOTE**: when referring to "state-target tuple", it means an object containing `state`
+> and `target` properties, where `target` is the class/function to build up (using `container.build`)
 > in order to get an object to call methods on.
 
 ```js
