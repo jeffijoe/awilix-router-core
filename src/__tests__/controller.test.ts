@@ -4,7 +4,8 @@ import { getState, rollUpState } from '../state-util'
 describe('createController', () => {
   it('creates the correct state', () => {
     const target = () => {
-      /**/
+      const noop = () => undefined
+      return { all: noop, get: noop, post: noop, put: noop }
     }
     const router = createController(target)
       .prefix('/root1')

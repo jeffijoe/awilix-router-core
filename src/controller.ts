@@ -6,7 +6,8 @@ import {
   addBeforeMiddleware,
   Constructor,
   IRouterConfigState,
-  addAfterMiddleware
+  addAfterMiddleware,
+  ClassOrFunctionReturning
 } from './state-util'
 import { HttpVerbs, HttpVerb } from './http-verbs'
 import { STATE, IS_CONTROLLER_BUILDER } from './symbols'
@@ -22,30 +23,32 @@ export interface IMethodBuilderOpts {
 /**
  * Verb builder function.
  */
-export type VerbBuilderFunction = (
+export type VerbBuilderFunction<T = any> = (
   path: string,
-  method: string,
+  method: keyof T,
   opts?: IMethodBuilderOpts
-) => IAwilixControllerBuilder
+) => IAwilixControllerBuilder<T>
 
 /**
  * Fluid router builder.
  */
-export interface IAwilixControllerBuilder {
+export interface IAwilixControllerBuilder<T = any> {
+  [STATE]: IRouterConfigState
+  [IS_CONTROLLER_BUILDER]: boolean
   target: Constructor | Function
-  get: VerbBuilderFunction
-  post: VerbBuilderFunction
-  put: VerbBuilderFunction
-  patch: VerbBuilderFunction
-  delete: VerbBuilderFunction
-  head: VerbBuilderFunction
-  options: VerbBuilderFunction
-  connect: VerbBuilderFunction
-  all: VerbBuilderFunction
+  get: VerbBuilderFunction<T>
+  post: VerbBuilderFunction<T>
+  put: VerbBuilderFunction<T>
+  patch: VerbBuilderFunction<T>
+  delete: VerbBuilderFunction<T>
+  head: VerbBuilderFunction<T>
+  options: VerbBuilderFunction<T>
+  connect: VerbBuilderFunction<T>
+  all: VerbBuilderFunction<T>
   verbs(
     verbs: Array<HttpVerb>,
     path: string,
-    method: string,
+    method: keyof T,
     opts?: IMethodBuilderOpts
   ): this
   prefix(path: string): this
@@ -73,9 +76,9 @@ export interface IAwilixControllerBuilder {
  *       before: [authenticate()]
  *     })
  */
-export function createController(
-  ClassOrFunction: Constructor | Function
-): IAwilixControllerBuilder {
+export function createController<T = any>(
+  ClassOrFunction: ClassOrFunctionReturning<T>
+): IAwilixControllerBuilder<T> {
   return createControllerFromState(ClassOrFunction, createState())
 }
 
