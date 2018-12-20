@@ -9,9 +9,26 @@ import { IAwilixControllerBuilder } from './controller'
 export type MiddlewareParameter = Array<any> | any
 
 /**
- * Basic constructor type.
+ * Function that returns T.
  */
-export type Constructor = new (...args: Array<any>) => any
+export type FunctionReturning<T = any> = (...args: Array<any>) => T
+
+/**
+ * A class or function returning T.
+ */
+export type ClassOrFunctionReturning<T = any> =
+  | FunctionReturning<T>
+  | Constructor<T>
+
+/**
+ * A class constructor. For example:
+ *
+ *    class MyClass {}
+ *
+ *    MyClass
+ *    ^^^^^^^
+ */
+export type Constructor<T = any> = { new (...args: any[]): T }
 
 /**
  * Target to instantiate and it's router state.
@@ -38,7 +55,7 @@ export interface IRouterConfigState {
   /**
    * Method configs (method-level).
    */
-  methods: Map<string, IRouteConfig>
+  methods: Map<MethodName, IRouteConfig>
 }
 
 /**
@@ -64,6 +81,11 @@ export interface IRouteConfig {
 }
 
 /**
+ * Method name type.
+ */
+export type MethodName = string | number | symbol | null
+
+/**
  * Rolls up state so paths are joined, middleware rolled into
  * the correct order, etc.
  *
@@ -71,8 +93,8 @@ export interface IRouteConfig {
  */
 export function rollUpState(
   state: IRouterConfigState
-): Map<string, IRouteConfig> {
-  const result = new Map<string, IRouteConfig>()
+): Map<MethodName, IRouteConfig> {
+  const result = new Map<MethodName, IRouteConfig>()
   state.methods.forEach((method, key) => {
     result.set(key, {
       paths: concatPaths(state.root.paths, method.paths),
@@ -121,7 +143,7 @@ export function getStateAndTarget(src: any): IStateAndTarget | null {
  */
 export function addRoute(
   state: IRouterConfigState,
-  methodName: string | null,
+  methodName: MethodName,
   path: string
 ) {
   const config = getOrCreateConfig(state, methodName)
@@ -139,7 +161,7 @@ export function addRoute(
  */
 export function addBeforeMiddleware(
   state: IRouterConfigState,
-  methodName: string | null,
+  methodName: MethodName,
   middleware: MiddlewareParameter
 ) {
   const config = getOrCreateConfig(state, methodName)
@@ -157,7 +179,7 @@ export function addBeforeMiddleware(
  */
 export function addAfterMiddleware(
   state: IRouterConfigState,
-  methodName: string | null,
+  methodName: MethodName,
   middleware: MiddlewareParameter
 ) {
   const config = getOrCreateConfig(state, methodName)
@@ -175,7 +197,7 @@ export function addAfterMiddleware(
  */
 export function addHttpVerbs(
   state: IRouterConfigState,
-  methodName: string | null,
+  methodName: MethodName,
   value: Array<HttpVerb>
 ) {
   const config = getOrCreateConfig(state, methodName)
@@ -192,7 +214,7 @@ export function addHttpVerbs(
  */
 export function getOrCreateConfig(
   state: IRouterConfigState,
-  methodName: string | null
+  methodName: MethodName
 ) {
   const config =
     methodName === null ? state.root : state.methods.get(methodName)
@@ -276,7 +298,7 @@ export function createState(): IRouterConfigState {
  */
 export function updateConfig(
   state: IRouterConfigState,
-  methodName: string | null,
+  methodName: MethodName,
   newConfig: Partial<IRouteConfig>
 ): IRouterConfigState {
   const existing = getOrCreateConfig(state, methodName)
