@@ -19,14 +19,25 @@ export function findControllers(
   const result = glob.sync(pattern, opts)
   return result
     .map(path => {
+      const items: Array<IStateAndTarget | null> = []
+
       let required = require(path)
 
-      // Support default exports (ES6).
-      if (required.default) {
-        required = required.default
+      if (required) {
+        const stateAndTarget = getStateAndTarget(required)
+        if (stateAndTarget) {
+          items.push(stateAndTarget)
+          return items
+        }
+
+        // loop through exports - this will cover named as well as a default export
+        for (const key of Object.keys(required)) {
+          items.push(getStateAndTarget(required[key]))
+        }
       }
 
-      return getStateAndTarget(required)
+      return items
     })
+    .reduce((acc, cur) => acc.concat(cur), [])
     .filter(x => x !== null) as FindControllersResult
 }
