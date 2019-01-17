@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.0
+
+- Support auto-loading of named exports ([#4](https://github.com/jeffijoe/awilix-router-core/pull/4), [whefter](https://github.com/whefter))
+- Update packages
+
 ## 1.4.0
 
 - Improved TypeScript typings for `methodName` parameter.
