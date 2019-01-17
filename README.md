@@ -51,6 +51,9 @@ yarn add awilix-router-core
 
 The end-user of the routing library will be able to use decorators or a builder pattern to declaratively set up their routes, middleware and methods.
 
+**Note**: in the examples below, an ES6 `default` export is used, but named exports and multiple exports
+per file are supported.
+
 ## With decorators
 
 ```js
