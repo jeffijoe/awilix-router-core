@@ -232,7 +232,10 @@ export function getOrCreateConfig(
  * @param target
  */
 export function getState(target: any): IRouterConfigState | null {
-  return (target.prototype ? target.prototype[STATE] : target[STATE]) || null
+  return (
+    (target && (target.prototype ? target.prototype[STATE] : target[STATE])) ||
+    null
+  )
 }
 
 /**
