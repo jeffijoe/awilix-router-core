@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1
+
+- Handle falsy values in `getState`
+
 ## 1.5.0
 
 - Support auto-loading of named exports ([#4](https://github.com/jeffijoe/awilix-router-core/pull/4), [whefter](https://github.com/whefter))
