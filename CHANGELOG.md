@@ -1,8 +1,12 @@
 # Changelog
 
-## 1.5.1
+## 1.6.1
 
 - Handle falsy values in `getState`
+
+## 1.6.0
+
+- Same as 1.5.0, release automation be automatin'.
 
 ## 1.5.0
 
