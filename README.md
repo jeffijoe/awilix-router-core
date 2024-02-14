@@ -12,26 +12,27 @@
 
 # Table of Contents
 
-* [Install](#install)
-* [Example](#example)
-  * [With decorators](#with-decorators)
-  * [With builder pattern](#with-builder-pattern)
-* [For framework adapter authors](#for-framework-adapter-authors)
-* [API](#api)
-  * [Route Declaration](#route-declaration)
-      * [Builder](#builder)
-        * [createController(targetClassOrFunction)](#createcontrollertargetclassorfunction)
-      * [Decorators](#decorators)
-        * [route(path)](#routepath)
-        * [before(middlewares) and <code>after(middlewares)</code>](#beforemiddlewares-and-aftermiddlewares)
-        * [verbs(httpVerbs)](#verbshttpverbs)
-        * [Verb shorthands](#verb-shorthands)
-  * [Extracting route config](#extracting-route-config)
-      * [getStateAndTarget(functionOrClassOrController)](#getstateandtargetfunctionorclassorcontroller)
-      * [rollUpState(state)](#rollupstatestate)
-      * [findControllers(pattern, globOptions)](#findcontrollerspattern-globoptions)
-* [Author](#author)
-
+- [awilix-router-core](#awilix-router-core)
+- [Table of Contents](#table-of-contents)
+- [Install](#install)
+- [Example](#example)
+  - [With decorators](#with-decorators)
+  - [With builder pattern](#with-builder-pattern)
+- [For framework adapter authors](#for-framework-adapter-authors)
+- [API](#api)
+  - [Route Declaration](#route-declaration)
+    - [Builder](#builder)
+      - [`createController(targetClassOrFunction)`](#createcontrollertargetclassorfunction)
+    - [Decorators](#decorators)
+      - [`route(path)`](#routepath)
+      - [`before(middlewares)` and `after(middlewares)`](#beforemiddlewares-and-aftermiddlewares)
+      - [`verbs(httpVerbs)`](#verbshttpverbs)
+      - [Verb shorthands](#verb-shorthands)
+  - [Extracting route config](#extracting-route-config)
+    - [`getStateAndTarget(functionOrClassOrController)`](#getstateandtargetfunctionorclassorcontroller)
+    - [`rollUpState(state)`](#rollupstatestate)
+    - [`findControllers(pattern, globOptions)`](#findcontrollerspattern-globoptions)
+- [Author](#author)
 
 # Install
 
@@ -66,12 +67,12 @@ import authenticate from 'your-framework-authentication'
 @before(bodyParser())
 @route('/news')
 export default class NewsController {
-  constructor ({ service }) {
+  constructor({ service }) {
     this.service = service
   }
 
   @GET()
-  async find (ctx) {
+  async find(ctx) {
     ctx.body = await this.service.doSomethingAsync()
   }
 
@@ -84,7 +85,7 @@ export default class NewsController {
   @route('(/:id)')
   @verbs([HttpVerbs.POST, HttpVerbs.PUT])
   @before(authenticate())
-  async save (ctx) {
+  async save(ctx) {
     ctx.body = await this.service.saveNews(ctx.params.id, ctx.request.body)
   }
 }
@@ -102,9 +103,11 @@ import authenticate from 'your-framework-authentication'
 // Can use a factory function or a class.
 const api = ({ service }) => ({
   find: async () => (ctx.body = await service.doSomethingAsync()),
-  get: async (ctx) => (ctx.body = await service.getNewsOrWhateverAsync(ctx.params.id)),
-  save: async (ctx) => (ctx.body = await service.saveNews(ctx.params.id, ctx.request.body))
-}) 
+  get: async (ctx) =>
+    (ctx.body = await service.getNewsOrWhateverAsync(ctx.params.id)),
+  save: async (ctx) =>
+    (ctx.body = await service.saveNews(ctx.params.id, ctx.request.body)),
+})
 
 export default createController(api)
   .before(bodyParser())
@@ -113,7 +116,7 @@ export default createController(api)
   .get('/:id', 'get') // <- "get" is the method on the result from `api`
   .verbs([HttpVerbs.POST, HttpVerbs.PUT], '/:id', 'save', {
     // "save" is the method on the result from `api`
-    before: [authenticate()]
+    before: [authenticate()],
   })
 ```
 
@@ -145,18 +148,18 @@ Creates a controller that will invoke methods on an instance of the specified `t
 
 The controller exposes the following builder methods:
 
-* `.get|post|put|patch|delete|head|options|connect|all(path, method, opts)`: shorthands for `.verbs([HttpVerbs.POST], ...)` - see [`HttpVerbs`][http-verbs] for possible values.
-* `.verbs(verbs, path, method, opts)`: registers a path mapping for the specified controller method.
-* `.prefix(path)`: registers a prefix for the controller. Calling this multiple times adds multiple prefix options.
-* `.before(middlewares)`: registers one or more middlewares that runs before any of the routes are processed.
-* `.after(middlewares)`: registers one or more middlewares that runs after the routes are processed.
+- `.get|post|put|patch|delete|head|options|connect|all(path, method, opts)`: shorthands for `.verbs([HttpVerbs.POST], ...)` - see [`HttpVerbs`][http-verbs] for possible values.
+- `.verbs(verbs, path, method, opts)`: registers a path mapping for the specified controller method.
+- `.prefix(path)`: registers a prefix for the controller. Calling this multiple times adds multiple prefix options.
+- `.before(middlewares)`: registers one or more middlewares that runs before any of the routes are processed.
+- `.after(middlewares)`: registers one or more middlewares that runs after the routes are processed.
 
 The optional `opts` object passed to `.verbs` can have the following properties:
 
-* `before`: one or more middleware that runs before the route handler.
-* `after`: one or more middleware that runs after the route handler.
+- `before`: one or more middleware that runs before the route handler.
+- `after`: one or more middleware that runs after the route handler.
 
-**Note**: all builder methods returns a _new builder_ - this means the builder is **immutable**! This allows you to have a common 
+**Note**: all builder methods returns a _new builder_ - this means the builder is **immutable**! This allows you to have a common
 builder setup that you can reuse for multiple controllers.
 
 ### Decorators
@@ -166,10 +169,10 @@ If you have enabled decorator support in your transpiler, you can use the decora
 The decorator API exports are:
 
 ```js
-import { 
-  route, 
+import {
+  route,
   before,
-  after, 
+  after,
   verbs,
   HttpVerbs,
 
@@ -182,7 +185,7 @@ import {
   CONNECT,
   OPTIONS,
   PATCH,
-  ALL
+  ALL,
 } from 'awilix-router-core'
 ```
 
@@ -233,7 +236,7 @@ class Controller {
 
 **Class-level**: not allowed.
 
-**Method-level**: adds HTTP verbs that the route will match. 
+**Method-level**: adds HTTP verbs that the route will match.
 
 Has no effect if no `route`s are configured.
 
@@ -272,12 +275,16 @@ This section is for framework adapter authors. Please see [awilix-koa][awilix-ko
 
 The primary functions needed for this are `getStateAndTarget`, `rollUpState`, and `findControllers`.
 
-> **NOTE**: when referring to "state-target tuple", it means an object containing `state` 
-> and `target` properties, where `target` is the class/function to build up (using `container.build`) 
+> **NOTE**: when referring to "state-target tuple", it means an object containing `state`
+> and `target` properties, where `target` is the class/function to build up (using `container.build`)
 > in order to get an object to call methods on.
 
 ```js
-import { getStateAndTarget, rollUpState, findControllers } from 'awilix-router-core'
+import {
+  getStateAndTarget,
+  rollUpState,
+  findControllers,
+} from 'awilix-router-core'
 ```
 
 ### `getStateAndTarget(functionOrClassOrController)`
@@ -290,7 +297,9 @@ This will return a map where the key is the controller method name and the value
 
 ### `findControllers(pattern, globOptions)`
 
-Using `glob`, loads controllers from matched files, with non-applicable files filtered out.
+Using `fast-glob`, loads controllers from matched files.
+
+> Note: This uses `require` and so currently is not compatible with ESM.
 
 Returns an array of state-target tuples.
 
@@ -298,5 +307,5 @@ Returns an array of state-target tuples.
 
 Jeff Hansen — [@Jeffijoe](https://twitter.com/Jeffijoe)
 
-  [http-verbs]: /src/http-verbs.ts
-  [awilix-koa]: https://github.com/jeffijoe/awilix-koa
+[http-verbs]: /src/http-verbs.ts
+[awilix-koa]: https://github.com/jeffijoe/awilix-koa
