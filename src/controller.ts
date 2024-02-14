@@ -7,7 +7,7 @@ import {
   Constructor,
   IRouterConfigState,
   addAfterMiddleware,
-  ClassOrFunctionReturning
+  ClassOrFunctionReturning,
 } from './state-util'
 import { HttpVerbs, HttpVerb } from './http-verbs'
 import { STATE, IS_CONTROLLER_BUILDER } from './symbols'
@@ -26,7 +26,7 @@ export interface IMethodBuilderOpts {
 export type VerbBuilderFunction<T = any> = (
   path: string,
   method: keyof T,
-  opts?: IMethodBuilderOpts
+  opts?: IMethodBuilderOpts,
 ) => IAwilixControllerBuilder<T>
 
 /**
@@ -49,7 +49,7 @@ export interface IAwilixControllerBuilder<T = any> {
     verbs: Array<HttpVerb>,
     path: string,
     method: keyof T,
-    opts?: IMethodBuilderOpts
+    opts?: IMethodBuilderOpts,
   ): this
   prefix(path: string): this
   before(value: MiddlewareParameter): this
@@ -77,7 +77,7 @@ export interface IAwilixControllerBuilder<T = any> {
  *     })
  */
 export function createController<T = any>(
-  ClassOrFunction: ClassOrFunctionReturning<T>
+  ClassOrFunction: ClassOrFunctionReturning<T>,
 ): IAwilixControllerBuilder<T> {
   return createControllerFromState(ClassOrFunction, createState())
 }
@@ -91,7 +91,7 @@ export function createController<T = any>(
  */
 export function createControllerFromState(
   ClassOrFunction: Constructor | Function,
-  state: IRouterConfigState
+  state: IRouterConfigState,
 ) {
   const builder: IAwilixControllerBuilder = {
     [STATE]: state,
@@ -109,19 +109,19 @@ export function createControllerFromState(
     prefix(path) {
       return createControllerFromState(
         ClassOrFunction,
-        addRoute(state, null, path)
+        addRoute(state, null, path),
       )
     },
     before(middleware) {
       return createControllerFromState(
         ClassOrFunction,
-        addBeforeMiddleware(state, null, middleware)
+        addBeforeMiddleware(state, null, middleware),
       )
     },
     after(middleware) {
       return createControllerFromState(
         ClassOrFunction,
-        addAfterMiddleware(state, null, middleware)
+        addAfterMiddleware(state, null, middleware),
       )
     },
     verbs(verbs, path, method, opts) {
@@ -138,7 +138,7 @@ export function createControllerFromState(
       }
 
       return createControllerFromState(ClassOrFunction, state)
-    }
+    },
   }
 
   return builder

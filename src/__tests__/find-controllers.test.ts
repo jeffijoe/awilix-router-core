@@ -7,19 +7,19 @@ describe('findControllers', () => {
     const defaultExports = result.find((x: any) => x.target.isDefaultExport)
     const namedExports = result.find((x: any) => x.target.isNamedExport)
     const mixedDefaultExports = result.find(
-      (x: any) => x.target.isMixedDefaultExport
+      (x: any) => x.target.isMixedDefaultExport,
     )
     const mixedNamedExports = result.find(
-      (x: any) => x.target.isMixedNamedExport
+      (x: any) => x.target.isMixedNamedExport,
     )
     const mixedModuleExports = result.find(
-      (x: any) => x.target.isMixedModuleExports
+      (x: any) => x.target.isMixedModuleExports,
     )
     const mixedModuleDefaultExports = result.find(
-      (x: any) => x.target.isMixedModuleDefaultExport
+      (x: any) => x.target.isMixedModuleDefaultExport,
     )
     const mixedModuleNamedExports = result.find(
-      (x: any) => x.target.isMixedModuleNamedExport
+      (x: any) => x.target.isMixedModuleNamedExport,
     )
     expect(result.length).toBe(6)
     expect(typeof (moduleExports as any).target).toBe('function')
