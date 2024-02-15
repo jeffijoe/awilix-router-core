@@ -1,4 +1,4 @@
-import * as glob from 'glob'
+import * as glob from 'fast-glob'
 import { IStateAndTarget, getStateAndTarget } from './state-util'
 
 /**
@@ -14,14 +14,15 @@ export type FindControllersResult = Array<IStateAndTarget>
  */
 export function findControllers(
   pattern: string,
-  opts?: glob.IOptions
+  opts?: glob.Options,
 ): FindControllersResult {
   const result = glob.sync(pattern, opts)
   return result
-    .map(path => {
+    .map((path) => {
       const items: Array<IStateAndTarget | null> = []
 
-      let required = require(path)
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const required = require(path)
 
       if (required) {
         const stateAndTarget = getStateAndTarget(required)
@@ -39,5 +40,5 @@ export function findControllers(
       return items
     })
     .reduce((acc, cur) => acc.concat(cur), [])
-    .filter(x => x !== null) as FindControllersResult
+    .filter((x) => x !== null) as FindControllersResult
 }

@@ -2,74 +2,74 @@
 
 exports[`createController creates the correct state 1`] = `
 Map {
-  "all" => Object {
-    "afterMiddleware": Array [
+  "all" => {
+    "afterMiddleware": [
       "afterRoot1",
       "afterRoot2",
     ],
-    "beforeMiddleware": Array [
+    "beforeMiddleware": [
       "beforeRoot1",
       "beforeRoot2",
       "beforeAll",
     ],
-    "paths": Array [
+    "paths": [
       "/root1/all",
       "/root2/all",
     ],
-    "verbs": Array [
+    "verbs": [
       "*",
     ],
   },
-  "get" => Object {
-    "afterMiddleware": Array [
+  "get" => {
+    "afterMiddleware": [
       "afterGet",
       "afterRoot1",
       "afterRoot2",
     ],
-    "beforeMiddleware": Array [
+    "beforeMiddleware": [
       "beforeRoot1",
       "beforeRoot2",
       "beforeGet",
     ],
-    "paths": Array [
+    "paths": [
       "/root1/get",
       "/root2/get",
     ],
-    "verbs": Array [
+    "verbs": [
       "GET",
     ],
   },
-  "post" => Object {
-    "afterMiddleware": Array [
+  "post" => {
+    "afterMiddleware": [
       "afterRoot1",
       "afterRoot2",
     ],
-    "beforeMiddleware": Array [
+    "beforeMiddleware": [
       "beforeRoot1",
       "beforeRoot2",
     ],
-    "paths": Array [
+    "paths": [
       "/root1/post",
       "/root2/post",
     ],
-    "verbs": Array [
+    "verbs": [
       "POST",
     ],
   },
-  "put" => Object {
-    "afterMiddleware": Array [
+  "put" => {
+    "afterMiddleware": [
       "afterRoot1",
       "afterRoot2",
     ],
-    "beforeMiddleware": Array [
+    "beforeMiddleware": [
       "beforeRoot1",
       "beforeRoot2",
     ],
-    "paths": Array [
+    "paths": [
       "/root1/",
       "/root2/",
     ],
-    "verbs": Array [
+    "verbs": [
       "PUT",
     ],
   },

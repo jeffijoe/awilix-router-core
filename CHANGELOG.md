@@ -1,5 +1,7 @@
 # Changelog
 
+> See the [Releases](https://github.com/jeffijoe/awilix-router-core/releases) page for the changelog going forward.
+
 ## 1.6.1
 
 - Handle falsy values in `getState`

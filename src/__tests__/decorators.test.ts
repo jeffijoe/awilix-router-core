@@ -11,7 +11,7 @@ import {
   PUT,
   POST,
   DELETE,
-  ALL
+  ALL,
 } from '../decorators'
 import { HttpVerbs } from '../http-verbs'
 import { getState } from '../state-util'
@@ -70,7 +70,7 @@ describe('before and after middleware', () => {
         'rootBefore1',
         'rootBefore2',
         'rootBefore3',
-        'rootBefore4'
+        'rootBefore4',
       ])
 
       expect(state.root.afterMiddleware).toEqual(['rootAfter1', 'rootAfter2'])
@@ -135,7 +135,7 @@ describe('methods decorator', () => {
         HttpVerbs.HEAD,
         HttpVerbs.PATCH,
         HttpVerbs.PUT,
-        HttpVerbs.POST
+        HttpVerbs.POST,
       ])
       expect(wee.paths).toEqual(['/save'])
     })

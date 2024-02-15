@@ -6,7 +6,7 @@ import {
   addAfterMiddleware,
   addHttpVerbs,
   MiddlewareParameter,
-  updateState
+  updateState,
 } from './state-util'
 
 /**
@@ -16,12 +16,8 @@ import {
  * @param path
  */
 export function route(path: string) {
-  return function routerDecorator(
-    target: any,
-    name: string | null = null,
-    descriptor?: PropertyDescriptor
-  ) {
-    updateState(target, state => addRoute(state, name, path))
+  return function routerDecorator(target: any, name: string | null = null) {
+    updateState(target, (state) => addRoute(state, name, path))
   }
 }
 
@@ -33,12 +29,8 @@ export function route(path: string) {
  * @param middleware
  */
 export function before(middleware: MiddlewareParameter) {
-  return function routerDecorator(
-    target: any,
-    name: string | null = null,
-    descriptor?: PropertyDescriptor
-  ) {
-    updateState(target, state => addBeforeMiddleware(state, name, middleware))
+  return function routerDecorator(target: any, name: string | null = null) {
+    updateState(target, (state) => addBeforeMiddleware(state, name, middleware))
   }
 }
 
@@ -50,12 +42,8 @@ export function before(middleware: MiddlewareParameter) {
  * @param middleware
  */
 export function after(middleware: MiddlewareParameter) {
-  return function routerDecorator(
-    target: any,
-    name: string | null = null,
-    descriptor?: PropertyDescriptor
-  ) {
-    updateState(target, state => addAfterMiddleware(state, name, middleware))
+  return function routerDecorator(target: any, name: string | null = null) {
+    updateState(target, (state) => addAfterMiddleware(state, name, middleware))
   }
 }
 
@@ -67,7 +55,7 @@ export function after(middleware: MiddlewareParameter) {
 export function verbs(httpVerbs: Array<HttpVerb>) {
   return function verbsDecorator(target: any, name: string | null = null) {
     invariant(name, 'The "verbs" decorator can only be used on class verbs.')
-    updateState(target, state => addHttpVerbs(state, name, httpVerbs))
+    updateState(target, (state) => addHttpVerbs(state, name, httpVerbs))
   }
 }
 

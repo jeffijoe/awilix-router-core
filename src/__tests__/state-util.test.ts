@@ -6,7 +6,7 @@ import {
   addRoute,
   addHttpVerbs,
   addBeforeMiddleware,
-  addAfterMiddleware
+  addAfterMiddleware,
 } from '../state-util'
 import { route, before, after, GET, POST } from '../decorators'
 import { HttpVerbs } from '../http-verbs'
@@ -39,12 +39,12 @@ describe('rollUpState', () => {
       '/root1/m1-1',
       '/root1/m1-2',
       '/root2/m1-1',
-      '/root2/m1-2'
+      '/root2/m1-2',
     ])
     expect(m1.beforeMiddleware).toEqual([
       'beforeRoot1',
       'beforeRoot2',
-      'beforem1'
+      'beforem1',
     ])
     expect(m1.afterMiddleware).toEqual(['afterm1', 'afterRoot1', 'afterRoot2'])
     expect(m1.verbs).toEqual([HttpVerbs.POST, HttpVerbs.GET])

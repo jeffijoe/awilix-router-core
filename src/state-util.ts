@@ -92,7 +92,7 @@ export type MethodName = string | number | symbol | null
  * @param state
  */
 export function rollUpState(
-  state: IRouterConfigState
+  state: IRouterConfigState,
 ): Map<MethodName, IRouteConfig> {
   const result = new Map<MethodName, IRouteConfig>()
   state.methods.forEach((method, key) => {
@@ -100,13 +100,13 @@ export function rollUpState(
       paths: concatPaths(state.root.paths, method.paths),
       beforeMiddleware: [
         ...state.root.beforeMiddleware,
-        ...method.beforeMiddleware
+        ...method.beforeMiddleware,
       ],
       afterMiddleware: [
         ...method.afterMiddleware,
-        ...state.root.afterMiddleware
+        ...state.root.afterMiddleware,
       ],
-      verbs: method.verbs
+      verbs: method.verbs,
     })
   })
   return result
@@ -144,11 +144,11 @@ export function getStateAndTarget(src: any): IStateAndTarget | null {
 export function addRoute(
   state: IRouterConfigState,
   methodName: MethodName,
-  path: string
+  path: string,
 ) {
   const config = getOrCreateConfig(state, methodName)
   return updateConfig(state, methodName, {
-    paths: uniq([...config.paths, path])
+    paths: uniq([...config.paths, path]),
   })
 }
 
@@ -162,11 +162,11 @@ export function addRoute(
 export function addBeforeMiddleware(
   state: IRouterConfigState,
   methodName: MethodName,
-  middleware: MiddlewareParameter
+  middleware: MiddlewareParameter,
 ) {
   const config = getOrCreateConfig(state, methodName)
   return updateConfig(state, methodName, {
-    beforeMiddleware: addMiddleware(config.beforeMiddleware, middleware)
+    beforeMiddleware: addMiddleware(config.beforeMiddleware, middleware),
   })
 }
 
@@ -180,11 +180,11 @@ export function addBeforeMiddleware(
 export function addAfterMiddleware(
   state: IRouterConfigState,
   methodName: MethodName,
-  middleware: MiddlewareParameter
+  middleware: MiddlewareParameter,
 ) {
   const config = getOrCreateConfig(state, methodName)
   return updateConfig(state, methodName, {
-    afterMiddleware: addMiddleware(config.afterMiddleware, middleware)
+    afterMiddleware: addMiddleware(config.afterMiddleware, middleware),
   })
 }
 
@@ -198,11 +198,11 @@ export function addAfterMiddleware(
 export function addHttpVerbs(
   state: IRouterConfigState,
   methodName: MethodName,
-  value: Array<HttpVerb>
+  value: Array<HttpVerb>,
 ) {
   const config = getOrCreateConfig(state, methodName)
   return updateConfig(state, methodName, {
-    verbs: uniq([...config.verbs, ...value])
+    verbs: uniq([...config.verbs, ...value]),
   })
 }
 
@@ -214,7 +214,7 @@ export function addHttpVerbs(
  */
 export function getOrCreateConfig(
   state: IRouterConfigState,
-  methodName: MethodName
+  methodName: MethodName,
 ) {
   const config =
     methodName === null ? state.root : state.methods.get(methodName)
@@ -261,7 +261,7 @@ export function setState(target: any, state: IRouterConfigState) {
  */
 export function updateState(
   target: any,
-  updater: (state: IRouterConfigState) => IRouterConfigState
+  updater: (state: IRouterConfigState) => IRouterConfigState,
 ) {
   setState(target, updater(getOrInitStateForDecoratorTarget(target)))
 }
@@ -282,7 +282,7 @@ export function getOrInitStateForDecoratorTarget(target: any) {
 export function createState(): IRouterConfigState {
   const state: IRouterConfigState = {
     root: createRouteConfig(),
-    methods: new Map<string, IRouteConfig>()
+    methods: new Map<string, IRouteConfig>(),
   }
   return state
 }
@@ -302,30 +302,30 @@ export function createState(): IRouterConfigState {
 export function updateConfig(
   state: IRouterConfigState,
   methodName: MethodName,
-  newConfig: Partial<IRouteConfig>
+  newConfig: Partial<IRouteConfig>,
 ): IRouterConfigState {
   const existing = getOrCreateConfig(state, methodName)
   const mergedConfig: IRouteConfig = {
     ...existing,
-    ...newConfig
+    ...newConfig,
   }
 
   // Root update is simple.
   if (methodName === null) {
     return {
       ...state,
-      root: mergedConfig
+      root: mergedConfig,
     }
   }
 
   // Filters out the entry we're replacing.
   const filteredEntries = Array.from(state.methods.entries()).filter(
-    ([key]) => key !== methodName
+    ([key]) => key !== methodName,
   )
 
   return {
     ...state,
-    methods: new Map([...filteredEntries, [methodName, mergedConfig]])
+    methods: new Map([...filteredEntries, [methodName, mergedConfig]]),
   }
 }
 
@@ -337,7 +337,7 @@ export function createRouteConfig(): IRouteConfig {
     paths: [],
     beforeMiddleware: [],
     afterMiddleware: [],
-    verbs: []
+    verbs: [],
   }
 }
 
@@ -362,11 +362,11 @@ function concatPaths(rootPaths: Array<string>, methodPaths: Array<string>) {
   }
 
   const result: Array<string> = []
-  rootPaths.forEach(rootPath => {
+  rootPaths.forEach((rootPath) => {
     if (methodPaths.length === 0) {
       result.push(rootPath)
     } else {
-      methodPaths.forEach(methodPath => {
+      methodPaths.forEach((methodPath) => {
         result.push(rootPath + methodPath)
       })
     }
