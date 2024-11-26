@@ -31,7 +31,7 @@
   - [Extracting route config](#extracting-route-config)
     - [`getStateAndTarget(functionOrClassOrController)`](#getstateandtargetfunctionorclassorcontroller)
     - [`rollUpState(state)`](#rollupstatestate)
-    - [`findControllers(pattern, globOptions)`](#findcontrollerspattern-globoptions)
+    - [`findControllers(pattern, opts)`](#findcontrollerspattern-opts)
 - [Author](#author)
 
 # Install
@@ -295,13 +295,13 @@ Given a controller (either from `createController` or a decorated class), return
 
 This will return a map where the key is the controller method name and the value is the routing config to set up for that method, with root paths + middleware stacks pre-merged.
 
-### `findControllers(pattern, globOptions)`
+### `findControllers(pattern, opts)`
 
 Using `fast-glob`, loads controllers from matched files.
 
-> Note: This uses `require` and so currently is not compatible with ESM.
+`opts` is a merge of glob options to pass into glob for pattern matching and the `esModules` property which, when set to `true` returns a `Promise` that loads controller modules via dynamic `import()` (for async/ ES modules usage).
 
-Returns an array of state-target tuples.
+Returns an array (or a `Promise` that resolves to an array) of state-target tuples.
 
 # Author
 
