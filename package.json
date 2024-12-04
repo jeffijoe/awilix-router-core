@@ -41,11 +41,9 @@
   },
   "devDependencies": {
     "@semantic-release/condition-codeship": "^1.1.0",
-    "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.18",
     "@types/prettier": "^3.0.0",
-    "@types/rimraf": "^4.0.5",
     "@typescript-eslint/eslint-plugin": "^7.0.1",
     "@typescript-eslint/parser": "^7.0.1",
     "eslint": "^8.56.0",
