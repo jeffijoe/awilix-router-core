@@ -1,12 +1,26 @@
 import * as glob from 'fast-glob'
 
 import { IStateAndTarget, getStateAndTarget } from './state-util'
+import { pathToFileURL } from 'node:url'
 
 /**
  * Find Controllers options for module finding and import resolution.
  */
 export type FindControllersOptions<ESM extends boolean = false> =
-  glob.Options & { esModules?: ESM }
+  glob.Options & {
+    /**
+     * When `true`, the function will use ESM `import` and return a `Promise`; otherwise
+     * uses `require` and is synchronous.
+     */
+    esModules?: ESM
+    /**
+     * The `import` function to use. Defaults to the global `import`.
+     * This is only used for testing.
+     *
+     * @private
+     */
+    import?: ESM extends true ? (path: string) => Promise<any> : never
+  }
 
 /**
  * Find Controllers result.
@@ -29,16 +43,22 @@ export function findControllers<ESM extends boolean>(
 ): Promise<FindControllersResult> | FindControllersResult {
   const result = glob.sync(pattern, opts)
 
+  /* istanbul ignore next: can't cover because we are replacing the importer in tests. */
+  const importFn = opts?.import ?? ((path) => import(path))
+
   if (opts && opts.esModules === true) {
     return Promise.all(
-      result.map((path) => import(path).then(extractStateAndTargetFromExports)),
+      result.map((path) =>
+        importFn(pathToFileURL(path).toString()).then(
+          extractStateAndTargetFromExports,
+        ),
+      ),
     ).then((controllers) =>
       controllers.reduce((acc, cur) => acc.concat(cur), []),
     )
   } else {
     return result
       .map((path) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const exports = require(path)
         return extractStateAndTargetFromExports(exports)
       })
