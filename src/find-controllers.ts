@@ -59,7 +59,6 @@ export function findControllers<ESM extends boolean>(
   } else {
     return result
       .map((path) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const exports = require(path)
         return extractStateAndTargetFromExports(exports)
       })
