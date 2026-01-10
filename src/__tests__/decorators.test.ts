@@ -96,12 +96,12 @@ describe('methods decorator', () => {
         @verbs([HttpVerbs.GET])
         class Test {}
         return new Test()
-      }).toThrowError(/verbs/)
+      }).toThrow(/verbs/)
       expect(() => {
         @GET()
         class Test {}
         return new Test()
-      }).toThrowError(/verbs/)
+      }).toThrow(/verbs/)
     })
   })
 
