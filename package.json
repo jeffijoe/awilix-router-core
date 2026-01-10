@@ -4,11 +4,21 @@
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "edge-light": "./lib/index.edge.mjs",
+      "workerd": "./lib/index.edge.mjs",
+      "import": "./lib/index.mjs",
+      "require": "./lib/index.js",
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
   "engines": {
     "node": ">=16.0.0"
   },
   "scripts": {
-    "build": "rimraf lib && tsc -p tsconfig.build.json",
+    "build": "rimraf lib && tsc -p tsconfig.build.json && rollup -c",
     "test": "jest",
     "test:watch": "jest --watchAll",
     "lint": "eslint --fix 'src/**/*.ts' && prettier --write \"src/**/*.ts\"",
@@ -41,6 +51,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
+    "@rollup/plugin-replace": "^6.0.3",
+    "@rollup/plugin-typescript": "^12.3.0",
     "@semantic-release/condition-codeship": "^1.1.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.13.4",
@@ -51,9 +63,11 @@
     "lint-staged": "^15.4.3",
     "prettier": "^3.5.1",
     "rimraf": "^6.0.1",
+    "rollup": "^4.55.1",
     "semantic-release": "^24.2.3",
     "semantic-release-conventional-commits": "^3.0.0",
     "ts-jest": "^29.2.5",
+    "tslib": "^2.8.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.24.1"
   },
