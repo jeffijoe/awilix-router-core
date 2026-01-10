@@ -39,7 +39,6 @@ describe('findControllers', () => {
     const result = await findControllers('__fixtures__/*.js', {
       absolute: true,
       esModules: true,
-      import: (path) => import(path.replace('file://', '')), // without the file scheme because Jest doesn't like it
     })
 
     const moduleExports = result.find((x: any) => x.target.isModuleExports)

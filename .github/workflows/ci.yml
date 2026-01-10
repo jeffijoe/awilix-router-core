@@ -17,14 +17,14 @@ on:
 jobs:
   ci:
     name: Lint, Test & Release (Node ${{ matrix.version }})
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: true
       matrix:
         version:
-          - 16
-          - 18
           - 20
+          - 22
+          - 24
           - current
     steps:
       - name: Checkout
