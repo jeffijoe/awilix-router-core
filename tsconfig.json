@@ -8,12 +8,12 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
-    "target": "ES2021",
+    "target": "ES2022",
     "module": "Node16",
     "sourceMap": true,
     "declaration": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["ES2021"]
+    "lib": ["ES2022"]
   }
 }

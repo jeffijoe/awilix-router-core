@@ -1,4 +1,4 @@
-import * as glob from 'fast-glob'
+import glob from 'fast-glob'
 
 import { IStateAndTarget, getStateAndTarget } from './state-util'
 import { pathToFileURL } from 'node:url'
